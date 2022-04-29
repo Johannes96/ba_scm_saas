@@ -20,3 +20,6 @@ funct_1 <- function(zahl) {
 }
 
 funct_1(1000)
+
+
+print("xxx")
