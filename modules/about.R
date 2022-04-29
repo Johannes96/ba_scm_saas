@@ -3,18 +3,23 @@ about_UI <- function(id) {
   fluidRow(
     column(12,
            
-           h4(p("Wiki")),
-           h5(p("This project is intended to facilitate useful comparisons between colleges in the NCAA, based on swimming performance, location, and academic information.  Here a prospective student-athlete, or anyone else with an interest can find schools fitting a particular set of criterion relevant to them, for example, schools close to home, with times in a particular range, and of a specified academic profile.")),
+           h3(strong("About")),
            br(),
-           h5(p("The project began as an attempt to combine my interest in swimming with a need to practice R, a programming language used primarily for analyzing and reporting data.  It has two components.  The first is this app, which queries a dataset to return information in the form of plots, data tables etc.  The second is the dataset itself, which I assembled by tying together information from the sources below.")),
+           h4(strong("Usage")),
            br(),
-           h5(p("I hope you find it interesting and/or useful.  Any comments or questions are welcome at gpilgrim2607@gmail.com"),
-              p("The source code for this Shiny app is available ", a("on github", href = "https://github.com/gpilgrim2670/SwimMap"), "."))
+           h5(p("With this tool you can analyse the ARR-movement of your company."),
+              p("Under the menu item", strong("Monthly Analysis"), "you can view the inventory of contracts for a specific month, and select desired filters to view the performance e.g. a specific customer-industry, a sales channel or a product-type."),
+              p(strong("Yearly Analysis"), "shows the movement of your inventory over the whole period of time when data is available."),
+              p("With the help of", strong("Forecast"), "you are able to predict your expected future ARR and react prior if need be."),
+              p("Under", strong("Employee success"), "you can monitor the performance of your employees.")),
+           br(),
+           h4(strong("ARR Definition")),
+           br(),
+           h5(".")
            
            
+      
     )
-   
-)
-  
+  ) 
   
 }
