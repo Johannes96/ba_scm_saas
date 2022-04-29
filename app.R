@@ -8,7 +8,7 @@ ui <- fluidPage(theme = shinytheme("flatly"),
     tabPanel("Yearly analysis", yearly_analytics_UI("yearly_analytics"), icon = icon("chart-bar")),
     tabPanel("Forecast", predictive_analytics_UI("predictive_analytics"), icon = icon("chart-line")),
     tabPanel("Employee success", customer_analytics_UI("customer_analytics"), icon = icon("users")),
-    navbarMenu("More", icon = icon("table"),
+    navbarMenu("More", icon = icon("gears"),
                tabPanel("About", "About"),
                tabPanel("panel 4b", "four-b"),
                tabPanel("panel 4c", "four-c")
