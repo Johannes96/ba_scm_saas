@@ -19,7 +19,7 @@ ui <- fluidPage(theme = shinytheme("flatly"),
 server <- function(input, output) {
 
     callModule(descriptive_analytics, "descriptive_analytics")
-    callModule(descriptive_analytics, "yearly_analytics")
+    callModule(yearly_analytics, "yearly_analytics")
     callModule(predictive_analytics, "predictive_analytics")
     callModule(customer_analytics_server, "customer_analytics")
 }

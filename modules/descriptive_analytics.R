@@ -88,10 +88,7 @@ descriptive_analytics <- function(input, output, session) {
   
 
 # Generate UI -------------------------------------------------------------
-  output$report_info <- renderText({
-    HTML(
-      "This report analyzes the order volumes of different customers in the distribution network of an existing manufacturer of fast-moving consumer goods.")
-  })
+
   
   # Input Boxes
   updateSelectizeInput(session, "SalesChannelFinder", label="Select Sales Channel", choices = unique(saas_data$SalesChannel), server=TRUE)
