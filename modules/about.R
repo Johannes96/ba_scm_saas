@@ -25,7 +25,11 @@ about_UI <- function(id) {
               p("To be exact, ARR is the value of the recurring revenue of subscriptions normalized for a single calendar year."),
               p("Because ARR is a recurring amount it allows measurement of company development and business forecasts."),
               p("It also enables to measure momentum in areas such as new sales, expensions, and price increases, as well as lost off momentum in contractions and customer churn."),
-              p("Source:", a("Zuora: Annual Recurring Revenue: What is ARR & How to Calculate It", href = "https://www.zuora.com/billing-topics/annual-recurring-revenue/"), ".")))
+              p("Source:", a("Zuora: Annual Recurring Revenue: What is ARR & How to Calculate It", href = "https://www.zuora.com/billing-topics/annual-recurring-revenue/"), ".")),
+          p(style="color:black;text-align:justify"),
+          withMathJax(),
+          p('$$ARR = (Total ~contract ~value / ~billing ~intervall) * 12$$',style="color:black;border:1px solid black;background-color:white")
+           )
            
            
       
