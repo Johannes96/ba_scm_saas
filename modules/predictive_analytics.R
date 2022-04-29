@@ -3,61 +3,88 @@ predictive_analytics_UI <- function(id) {
   ns <- NS(id)
   
   tagList(
-    fluidRow(
-      column(width=12, verbatimTextOutput(ns("report_info")))),
-    fluidRow(
-      box(title="Controls", status='primary', width=12, collapsible = TRUE, collapsed = FALSE,
-          column(width=2, selectizeInput(ns("KundenArt"), label="Kunden: Art", choices = NULL, multiple=TRUE)),
-          column(width=2, selectizeInput(ns("KundenGrp"), label="Kunden: Gruppe", choices = NULL, multiple=TRUE)),
-          column(width=2, selectizeInput(ns("KundenTyp"), label="Kunden: Typ", choices = NULL, multiple=TRUE)),
-          column(width=2, selectizeInput(ns("Forecast"), label="Forecast", choices = c("EXPO-1", "EXPO-2", "ETSM", "ARIMA", "Neuro"), selected = "EXPO-1", multiple=FALSE)))),
-    fluidRow(
-      uiOutput(ns("box_map")),
-      uiOutput(ns("box_forecast_week"))),
-    fluidRow(
-      uiOutput(ns("box_forecast_day"))
+    
+    sidebarLayout(
+      sidebarPanel(
+        
+        titlePanel("Filters"),
+        #shinythemes::themeSelector(),
+        fluidRow(column(12,
+                        
+                        # Select which Customer-industry(s) to plot
+                        selectizeInput(inputId = "IndustryFinder",
+                                       label = "Select Customer-Industry(s):",
+                                       choices = levels(Industries),
+                                       multiple=TRUE,
+                                       selected=character(0)
+                        ))),
+        fluidRow(column(5,
+                        # Select which Sales Channel and type to plot
+                        selectInput(inputId = ns("SalesChannel"),
+                                    label = "Select Sales Channel",
+                                    choices=NULL, 
+                                    multiple=TRUE)
+        ),
+        column(5, ofset = 3,
+               selectInput(inputId = ns("SalesTyp"),
+                           label = "Select Sales-typ",
+                           choices=NULL, 
+                           multiple=TRUE)
+        )),
+        
+        # Select which Region(s) to plot
+        checkboxGroupInput(inputId = "ProductTypeFinder",
+                           label = "Select Product-type(s):",
+                           choices = c("Cloud" = "Cloud", "On Premises", "Hybrid", "Support"),
+                           selected = c("Cloud" = "Cloud", "On Premises", "Hybrid")),
+        
+        # Set Billing Intervall
+        sliderInput(inputId = "BillingIntervall",
+                    label = "Select Billing intervall",
+                    min = 1,
+                    max = 36,
+                    value = c(1,36))
+      ),
+      mainPanel(
+      )
     )
   )
+  
 }
+
 
 predictive_analytics <- function(input, output, session) {
   
-
-# Add variables -----------------------------------------------------------
-  selected <- reactiveValues()
   
-  filter <- reactiveValues(Kart = unique(shpm$Kart),
-                           Kgrp = unique(shpm$Kgruppe),
-                           Ktyp = unique(shpm$Ktyp))
+  selected <- reactiveValues(SalesChannel = NULL,
+                             SalesTyp = NULL)
   
-
-# Generate GUI ------------------------------------------------------------
-  observeEvent(eventExpr = input$KundenArt, ignoreNULL = FALSE, ignoreInit = TRUE, {
-    selected$Kart <- input$KundenArt
-    filter$Kart <- if(is.null(selected$Kart)) unique(shpm$Kart) else selected$Kart
+  filter <- reactiveValues(SalesChannel = unique(saas_data$SalesChannel),
+                           SalesTyp = unique(saas_data$SalesTyp))
+  
+  
+  observeEvent(eventExpr = input$SalesChannel, ignoreNULL = FALSE, ignoreInit = TRUE, {
+    selected$SalesChannel <- input$SalesChannel
+    filter$SalesChannel <- if(is.null(selected$SalesChannel)) unique(saas_data$SalesChannel) else selected$SalesChannel
   })
   
-  observeEvent(eventExpr = input$KundenGrp, ignoreNULL = FALSE, ignoreInit = TRUE, {
-    selected$Kgrp <- input$KundenGrp
-    filter$Kgrp <- if(is.null(selected$Kgrp)) unique(shpm$Kgruppe) else selected$Kgrp
+  observeEvent(eventExpr = input$SalesTyp, ignoreNULL = FALSE, ignoreInit = TRUE, {
+    selected$SalesTyp <- input$SalesTyp
+    filter$SalesTyp <- if(is.null(selected$SalesTyp)) unique(saas_data$SalesTyp) else selected$SalesTyp
   })
   
-  observeEvent(eventExpr = input$KundenTyp, ignoreNULL = FALSE, ignoreInit = TRUE, {
-    selected$Ktyp <- input$KundenTyp
-    filter$Ktyp <- if(is.null(selected$Ktyp)) unique(shpm$Ktyp) else selected$Ktyp
-  })
+  
+  
+  
+  # Generate UI -------------------------------------------------------------
   
   
   # Input Boxes
-  updateSelectizeInput(session, "KundenArt", label="Kunden: Art", choices = unique(shpm$Kart), server=TRUE)
-  updateSelectizeInput(session, "KundenGrp", label="Kunden: Gruppe", choices = unique(shpm$Kgruppe), server=TRUE)
-  updateSelectizeInput(session, "KundenTyp", label="Kunden: Typ", choices = unique(shpm$Ktyp), server=TRUE)
+  updateSelectizeInput(session, "SalesChannel", label="Select Sales Channel", choices = unique(saas_data$SalesChannel), server=TRUE)
+  updateSelectizeInput(session, "SalesTyp", label="Select Sales-typ", choices = unique(saas_data$SalesTyp), server=TRUE)
   
   
-  output$report_info <- renderText({
-    HTML(
-      "This report makes a forecast concerning the shipment volumes for the last weeks of the year.")
-  })
+
   
   
   # Box: Map & Pie
