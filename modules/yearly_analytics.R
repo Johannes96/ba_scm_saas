@@ -53,7 +53,7 @@ yearly_analytics_UI <- function(id) {
 }
 
 
-descriptive_analytics <- function(input, output, session) {
+yearly_analytics <- function(input, output, session) {
   
   
   selected <- reactiveValues(SalesChannel = NULL,
