@@ -6,7 +6,6 @@ descriptive_analytics_UI <- function(id) {
 
     sidebarLayout(
       sidebarPanel(
-        
         titlePanel("Filters"),
         #shinythemes::themeSelector(),
         fluidRow(column(12,

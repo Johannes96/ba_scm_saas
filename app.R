@@ -1,7 +1,7 @@
 source('global.R')
 
 ui <- fluidPage(theme = shinytheme("flatly"),
-  navbarPage(
+    navbarPage(
     theme = "flatly",
     "SaaS Data Analysis",
     tabPanel("Monthly analysis", descriptive_analytics_UI("descriptive_analytics"), icon = icon("calendar", "f073")),
