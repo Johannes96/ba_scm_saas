@@ -28,13 +28,13 @@ descriptive_analytics_UI <- function(id) {
                                       ))),
           fluidRow(column(5,
                           # Select which Sales Channel and type to plot
-                          selectInput(inputId = ns("SalesChannel"),
+                          selectInput(inputId = ns("SalesChannelFinder"),
                                       label = "Select Sales Channel",
                                       choices=NULL, 
                                       multiple=TRUE)
                  ),
                  column(5, ofset = 3,
-                        selectInput(inputId = ns("SalesTyp"),
+                        selectInput(inputId = ns("SalesTypFinder"),
                                   label = "Select Sales-typ",
                                   choices=NULL, 
                                   multiple=TRUE)
@@ -71,13 +71,13 @@ descriptive_analytics <- function(input, output, session) {
                            SalesTyp = unique(saas_data$SalesTyp))
   
   
-  observeEvent(eventExpr = input$SalesChannel, ignoreNULL = FALSE, ignoreInit = TRUE, {
-    selected$SalesChannel <- input$SalesChannel
+  observeEvent(eventExpr = input$SalesChannelFinder, ignoreNULL = FALSE, ignoreInit = TRUE, {
+    selected$SalesChannel <- input$SalesChannelFinder
     filter$SalesChannel <- if(is.null(selected$SalesChannel)) unique(saas_data$SalesChannel) else selected$SalesChannel
   })
   
-  observeEvent(eventExpr = input$SalesTyp, ignoreNULL = FALSE, ignoreInit = TRUE, {
-    selected$SalesTyp <- input$SalesTyp
+  observeEvent(eventExpr = input$SalesTypFinder, ignoreNULL = FALSE, ignoreInit = TRUE, {
+    selected$SalesTyp <- input$SalesTypFinder
     filter$SalesTyp <- if(is.null(selected$SalesTyp)) unique(saas_data$SalesTyp) else selected$SalesTyp
   })
   
@@ -91,8 +91,8 @@ descriptive_analytics <- function(input, output, session) {
 
   
   # Input Boxes
-  updateSelectizeInput(session, "SalesChannel", label="Select Sales Channel", choices = unique(saas_data$SalesChannel), server=TRUE)
-  updateSelectizeInput(session, "SalesTyp", label="Select Sales-typ", choices = unique(saas_data$SalesTyp), server=TRUE)
+  updateSelectizeInput(session, "SalesChannelFinder", label="Select Sales Channel", choices = unique(saas_data$SalesChannel), server=TRUE)
+  updateSelectizeInput(session, "SalesTypFinder", label="Select Sales-typ", choices = unique(saas_data$SalesTyp), server=TRUE)
 
   
 }
