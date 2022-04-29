@@ -10,7 +10,7 @@ yearly_analytics_UI <- function(id) {
         titlePanel("Filters"),
         #shinythemes::themeSelector(),
         fluidRow(column(12,
-                        
+                    
                         # Select which Customer-industry(s) to plot
                         selectizeInput(inputId = "IndustryFinder",
                                        label = "Select Customer-Industry(s):",
@@ -20,18 +20,18 @@ yearly_analytics_UI <- function(id) {
                         ))),
         fluidRow(column(5,
                         # Select which Sales Channel and type to plot
-                        selectInput(inputId = ns("SalesChannelFinder"),
+                        selectInput(inputId = ns("SalesChannel"),
                                     label = "Select Sales Channel",
                                     choices=NULL, 
                                     multiple=TRUE)
         ),
         column(5, ofset = 3,
-               selectInput(inputId = ns("SalesTypFinder"),
+               selectInput(inputId = ns("SalesTyp"),
                            label = "Select Sales-typ",
                            choices=NULL, 
                            multiple=TRUE)
         )),
-
+        
         # Select which Region(s) to plot
         checkboxGroupInput(inputId = "ProductTypeFinder",
                            label = "Select Product-type(s):",
@@ -63,13 +63,13 @@ descriptive_analytics <- function(input, output, session) {
                            SalesTyp = unique(saas_data$SalesTyp))
   
   
-  observeEvent(eventExpr = input$SalesChannelFinder, ignoreNULL = FALSE, ignoreInit = TRUE, {
-    selected$SalesChannel <- input$SalesChannelFinder
+  observeEvent(eventExpr = input$SalesChannel, ignoreNULL = FALSE, ignoreInit = TRUE, {
+    selected$SalesChannel <- input$SalesChannel
     filter$SalesChannel <- if(is.null(selected$SalesChannel)) unique(saas_data$SalesChannel) else selected$SalesChannel
   })
   
-  observeEvent(eventExpr = input$SalesTypFinder, ignoreNULL = FALSE, ignoreInit = TRUE, {
-    selected$SalesTyp <- input$SalesTypFinder
+  observeEvent(eventExpr = input$SalesTyp, ignoreNULL = FALSE, ignoreInit = TRUE, {
+    selected$SalesTyp <- input$SalesTyp
     filter$SalesTyp <- if(is.null(selected$SalesTyp)) unique(saas_data$SalesTyp) else selected$SalesTyp
   })
   
@@ -83,8 +83,8 @@ descriptive_analytics <- function(input, output, session) {
   
   
   # Input Boxes
-  updateSelectizeInput(session, "SalesChannelFinder", label="Select Sales Channel", choices = unique(saas_data$SalesChannel), server=TRUE)
-  updateSelectizeInput(session, "SalesTypFinder", label="Select Sales-typ", choices = unique(saas_data$SalesTyp), server=TRUE)
+  updateSelectizeInput(session, "SalesChannel", label="Select Sales Channel", choices = unique(saas_data$SalesChannel), server=TRUE)
+  updateSelectizeInput(session, "SalesTyp", label="Select Sales-typ", choices = unique(saas_data$SalesTyp), server=TRUE)
   
   
 }
