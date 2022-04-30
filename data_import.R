@@ -24,7 +24,7 @@ saas_data <- dbGetQuery(con_saas, str_SQL_Saas) %>%
   left_join(x = ., y = saas_adr, by = "CustomerID")
 
 # Define values for filter
-Periods <- ordered(saas_data$Period, levels = c("2020-09-01", "2020-10-01", "2020-11-01", "2020-12-01", "2021-01-01", "2021-02-01", "2021-03-01", "2021-04-01", "2021-05-01", "2021-06-01", "2021-07-01", "2021-08-01", "2021-09-01", "2021-10-01", "2021-11-01", "2021-12-01", "2022-01-01", "2022-02-01", "2022-03-01"))
-Industries <- ordered(saas_data$CustomerIndustry, levels = c("Information Technology", "Professional Services and Agencies", "Health", "Telecommunication", "Information Technology and Telecommunication", "Finance, Insurance and Legal", "State and Administration", "Manufacturing", "Pharmaceutical", "Transport and Traffic", "Retailing", "Automotive", "Transportation and Traffic", "Energy and Water", "Pharmaceuticals", "Finance", "Media and Culture", "Food", "Education and Non-Profit", "Legal", "Public", "Other", "Real Estate", "Finance Insurance and Legal"))
+Periods <- ordered(saas_data$Period, levels = unique(saas_data$Period))
+Industries <- ordered(saas_data$CustomerIndustry, levels = unique(saas_data$CustomerIndustry))
 
 dbDisconnect(con_saas)
