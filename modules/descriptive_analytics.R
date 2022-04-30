@@ -11,16 +11,16 @@ descriptive_analytics_UI <- function(id) {
         fluidRow(column(12,
                         
                         # Select Period
-                        selectInput(inputId = "PeriodFinder",
-                                    label = "Select Period",
+                        selectInput(inputId = ns("PeriodFinder"),
+                                    label = "Period",
                                     choices = levels(Periods),
                                     selected = "2022-03-01",
                         
                         ),
                         
                         # Select which Customer-industry(s) to plot
-                        selectizeInput(inputId = "IndustryFinder",
-                                      label = "Select Customer-Industry(s):",
+                        selectizeInput(inputId = ns("IndustryFinder"),
+                                      label = "Customer-Industry(s):",
                                       choices = levels(Industries),
                                       multiple=TRUE,
                                       selected=character(0)
@@ -28,37 +28,39 @@ descriptive_analytics_UI <- function(id) {
           fluidRow(column(5,
                           # Select which Sales Channel and type to plot
                           selectInput(inputId = ns("SalesChannelFinder"),
-                                      label = "Select Sales Channel",
+                                      label = "Sales Channel",
                                       choices=NULL, 
                                       multiple=TRUE)
                  ),
                  column(5, ofset = 3,
                         selectInput(inputId = ns("SalesTypFinder"),
-                                  label = "Select Sales-typ",
+                                  label = "Sales-type",
                                   choices=NULL, 
                                   multiple=TRUE)
                  )),
+        fluidRow(column(12,
+                        # Select which Region(s) to plot
+                        checkboxGroupInput(inputId = ns("ProductTypeFinder"),
+                                           label = "Product-type:",
+                                           choices = unique(saas_data$ProductType),
+                                           selected = c("Cloud" = "Cloud", "On Premises", "Hybrid")),
+                        # Set Billing Intervall
+                        sliderInput(inputId = ns("BillingIntervall"),
+                                    label = "Billing intervall",
+                                    min = min(saas_data$BillingInterval),
+                                    max = max(saas_data$BillingInterval),
+                                    value = c(min(saas_data$BillingInterval), max(saas_data$BillingInterval)))
+                  ))
                
-                       # Select which Region(s) to plot
-                       checkboxGroupInput(inputId = "ProductTypeFinder",
-                                          label = "Select Product-type(s):",
-                                          choices = c("Cloud" = "Cloud", "On Premises", "Hybrid", "Support"),
-                                          selected = c("Cloud" = "Cloud", "On Premises", "Hybrid")),
-               
-                      # Set Billing Intervall
-                            sliderInput(inputId = "BillingIntervall",
-                                  label = "Select Billing intervall",
-                                  min = 1,
-                                  max = 36,
-                                  value = c(1,36))
         ),
       mainPanel(
+        plotOutput(ns("plt_test")),
+        textOutput(ns("debug_text"))
         )
       )
     )
 
 }
-
 
 descriptive_analytics <- function(input, output, session) {
   
@@ -68,7 +70,6 @@ descriptive_analytics <- function(input, output, session) {
   
   filter <- reactiveValues(SalesChannel = unique(saas_data$SalesChannel),
                            SalesTyp = unique(saas_data$SalesTyp))
-  
   
   observeEvent(eventExpr = input$SalesChannelFinder, ignoreNULL = FALSE, ignoreInit = TRUE, {
     selected$SalesChannel <- input$SalesChannelFinder
@@ -80,18 +81,29 @@ descriptive_analytics <- function(input, output, session) {
     filter$SalesTyp <- if(is.null(selected$SalesTyp)) unique(saas_data$SalesTyp) else selected$SalesTyp
   })
   
+output$plt_test <- renderPlot({
+  
+  df_plt_temp <- saas_data %>%
+    filter(Industries %in% c(input$IndustryFinder))
+  
+  p <- ggplot(df_plt_temp, aes(ARR)) +
+    geom_histogram()
+  
+  print(p)
+})
 
+output$debug_text <- renderText({
+  
+  paste("input customer industry: ", input$IndustryFinder)
+  
+})
   
   
-  
-  
-
 # Generate UI -------------------------------------------------------------
 
   
   # Input Boxes
-  updateSelectizeInput(session, "SalesChannelFinder", label="Select Sales Channel", choices = unique(saas_data$SalesChannel), server=TRUE)
-  updateSelectizeInput(session, "SalesTypFinder", label="Select Sales-typ", choices = unique(saas_data$SalesTyp), server=TRUE)
-
+  updateSelectizeInput(session, "SalesChannelFinder", label="Sales Channel", choices = unique(saas_data$SalesChannel), server=TRUE)
+  updateSelectizeInput(session, "SalesTypFinder", label="Sales type", choices = unique(saas_data$SalesTyp), server=TRUE)
   
 }

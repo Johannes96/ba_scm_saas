@@ -21,6 +21,7 @@ library(plotly)
 library(leaflet)
 library(ggplot2)
 library(DT)
+library(reactable)
 
 
 # Machine Learning --------------------------------------------------------

@@ -5,24 +5,16 @@ customer_analytics_UI <- function(id) {
     fluidRow(
       column(width=12, verbatimTextOutput(ns("report_info_2")))),
     fluidRow(
-      box(title="Customer data", status = "primary", width=12, collapsible = TRUE, collapsed = FALSE,
-          DT::DTOutput(ns("tbl_saas_data"))),
+      box(title="DT Table", status = "primary", width=12, collapsible = TRUE, collapsed = FALSE,
+          DT::DTOutput(ns("tbl_saas_1"))),
     ),
     fluidRow(
-      box(title="Address data", status = "primary", width=12, collapsible = TRUE, collapsed = TRUE,
-          DT::DTOutput(ns("tbl_saas_adr"))),
+      box(title="Reactable", status = "primary", width=12, collapsible = TRUE, collapsed = FALSE,
+          reactableOutput(ns("tbl_saas_2"), width = "auto", height = "auto", inline = FALSE)),
     )
   )
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
 }
 
 customer_analytics_server <- function(input, output, session) {
@@ -33,13 +25,12 @@ customer_analytics_server <- function(input, output, session) {
       "This sheet displays the data tables.")
   })
   
-  output$tbl_saas_data <- DT::renderDT({
-    saas_data_2
+  output$tbl_saas_1 <-renderDT({
+    saas_data
+  })
+  
+  output$tbl_saas_2 <-renderReactable({
+    reactable(saas_data)
   })
 
-  output$tbl_saas_adr <- DT::renderDT({
-    saas_adr
-  })
-  
-  
 }
