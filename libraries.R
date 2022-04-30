@@ -17,6 +17,7 @@ library(DBI)
 # DataViz -----------------------------------------------------------------
 library(shiny)
 library(shinydashboard)
+library(shinyWidgets)
 library(plotly)
 library(leaflet)
 library(ggplot2)

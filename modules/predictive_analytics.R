@@ -12,39 +12,39 @@ predictive_analytics_UI <- function(id) {
         fluidRow(column(12,
                         
                         # Select which Customer-industry(s) to plot
-                        selectizeInput(inputId = "IndustryFinder",
-                                       label = "Select Customer-Industry(s):",
-                                       choices = levels(Industries),
-                                       multiple=TRUE,
-                                       selected=character(0)
+                        selectizeInput(inputId = ns("CustomerIndustry"),
+                                       label = "Customer-Industry",
+                                       choices = NULL,
+                                       multiple=TRUE
                         ))),
-        fluidRow(column(5,
+        fluidRow(column(6,
                         # Select which Sales Channel and type to plot
-                        selectInput(inputId = ns("SalesChannel"),
-                                    label = "Select Sales Channel",
+                        selectizeInput(inputId = ns("SalesChannel"),
+                                    label = "Sales Channel",
                                     choices=NULL, 
                                     multiple=TRUE)
         ),
-        column(5, ofset = 3,
-               selectInput(inputId = ns("SalesTyp"),
-                           label = "Select Sales-typ",
+        column(6, ofset = 3,
+               selectizeInput(inputId = ns("SalesTyp"),
+                           label = "Sales-typ",
                            choices=NULL, 
                            multiple=TRUE)
         )),
-        
-        # Select which Region(s) to plot
-        checkboxGroupInput(inputId = "ProductTypeFinder",
-                           label = "Select Product-type(s):",
-                           choices = c("Cloud" = "Cloud", "On Premises", "Hybrid", "Support"),
-                           selected = c("Cloud" = "Cloud", "On Premises", "Hybrid")),
-        
-        # Set Billing Intervall
-        sliderInput(inputId = "BillingIntervall",
-                    label = "Select Billing intervall",
-                    min = 1,
-                    max = 36,
-                    value = c(1,36))
-      ),
+        fluidRow(column(12,
+                        # Select which Product-type(s) to plot
+                        checkboxGroupInput(inputId = ns("ProductType"),
+                                           label = "Product-type(s):",
+                                           choices = unique(saas_data$ProductType),
+                                           selected = c("Cloud" = "Cloud", "On Premises", "Hybrid")),
+                        
+                        # Set Billing Intervall
+                        sliderInput(inputId = ns("BillingInterval"),
+                                    label = "Billing intervall [Month]",
+                                    min = min(saas_data$BillingInterval),
+                                    max = max(saas_data$BillingInterval),
+                                    value = c(min(saas_data$BillingInterval), max(saas_data$BillingInterval)))
+        )), width=3),
+      
       mainPanel(
       )
     )
@@ -57,10 +57,16 @@ predictive_analytics <- function(input, output, session) {
   
   
   selected <- reactiveValues(SalesChannel = NULL,
-                             SalesTyp = NULL)
+                             SalesTyp = NULL,
+                             CustomerIndustry = NULL,
+                             ProductType=NULL,
+                             BillingInterval=NULL)
   
   filter <- reactiveValues(SalesChannel = unique(saas_data$SalesChannel),
-                           SalesTyp = unique(saas_data$SalesTyp))
+                           SalesTyp = unique(saas_data$SalesTyp),
+                           CustomerIndustry = unique(saas_data$CustomerIndustry),
+                           ProductType = unique(saas_data$ProductType),
+                           BillingInterval = unique(saas_data$BillingInterval))
   
   
   observeEvent(eventExpr = input$SalesChannel, ignoreNULL = FALSE, ignoreInit = TRUE, {
@@ -73,16 +79,31 @@ predictive_analytics <- function(input, output, session) {
     filter$SalesTyp <- if(is.null(selected$SalesTyp)) unique(saas_data$SalesTyp) else selected$SalesTyp
   })
   
+  observeEvent(eventExpr = input$CustomerIndustry, ignoreNULL = FALSE, ignoreInit = TRUE, {
+    selected$CustomerIndustry <- input$CustomerIndustry
+    filter$CustomerIndustry <- if(is.null(selected$CustomerIndustry)) unique(saas_data$CustomerIndustry) else selected$CustomerIndustry
+  })
   
+  observeEvent(eventExpr = input$ProductType, ignoreNULL = FALSE, ignoreInit = TRUE, {
+    selected$ProductType <- input$ProductType
+    filter$ProductType <- if(is.null(selected$ProductType)) unique(saas_data$ProductType) else selected$ProductType
+  })
+ 
+  observeEvent(eventExpr = input$BillingInterval, ignoreNULL = FALSE, ignoreInit = TRUE, {
+    selected$BillingInterval <- input$BillingInterval
+    filter$BillingInterval <- if(is.null(selected$BillingInterval)) unique(saas_data$BillingInterval) else selected$BillingInterval
+  }) 
   
   
   # Generate UI -------------------------------------------------------------
   
   
   # Input Boxes
-  updateSelectizeInput(session, "SalesChannel", label="Select Sales Channel", choices = unique(saas_data$SalesChannel), server=TRUE)
-  updateSelectizeInput(session, "SalesTyp", label="Select Sales-typ", choices = unique(saas_data$SalesTyp), server=TRUE)
-  
+  updateSelectizeInput(session, "SalesChannel", label="Sales Channel", choices = unique(saas_data$SalesChannel), server=TRUE)
+  updateSelectizeInput(session, "SalesTyp", label="Sales-typ", choices = unique(saas_data$SalesTyp), server=TRUE)
+  updateSelectizeInput(session, "CustomerIndustry", label="Customer-Industry", choices = unique(saas_data$CustomerIndustry), server=TRUE)
+  updateSliderInput(session, "BillingInterval", label="Billing intervall [Month]", min = min(saas_data$BillingInterval), max = max(saas_data$BillingInterval), value = c(min(saas_data$BillingInterval), max(saas_data$BillingInterval)))
+  updateCheckboxGroupInput(session, "ProductType", label="Product-type(s)", choices = unique(saas_data$ProductType))
   
 
   
