@@ -114,20 +114,20 @@ yearly_analytics <- function(input, output, session) {
       summarise(TotalARR = sum(ARR)) %>%
       ungroup()
     
-      
-     # fit <- lm(data=temp_1, TotalARR ~ Period)
-      
-      plot_ly() %>%
-        add_trace(data = temp_1, type="bar", x= ~Period, y= ~TotalARR, name="ARR",
-                  hoverinfo="text", text=~format(round(TotalARR, digits=0), big.mark=".", decimal.mark=",")) %>%
-       # add_lines(y=fitted(fit), name="Regression Line") %>%
-        layout(title="ARR-movement", showlegend=TRUE, barmode="stack")
+    
+    # fit <- lm(data=temp_1, TotalARR ~ Period)
+    
+    plot_ly() %>%
+      add_trace(data = temp_1, type="bar", x= ~Period, y= ~TotalARR, name="ARR",
+                hoverinfo="text", text=~format(round(TotalARR, digits=0), big.mark=".", decimal.mark=",")) %>%
+      # add_lines(y=fitted(fit), name="Regression Line") %>%
+      layout(title="ARR-movement", showlegend=TRUE)
       
       
   })
   
   
-  # Generate UI -------------------------------------------------------------
+  # Generate UI-------------------------------------------------------------
   
   
   # Input Boxes
