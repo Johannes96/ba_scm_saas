@@ -37,3 +37,7 @@ about_UI <- function(id) {
    
   
 }
+
+about <- function(input, output, session) {
+
+}
