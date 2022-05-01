@@ -23,6 +23,7 @@ library(leaflet)
 library(ggplot2)
 library(DT)
 library(reactable)
+library(rpivotTable)
 
 
 # Machine Learning --------------------------------------------------------
@@ -33,3 +34,4 @@ library(forecast)
 
 library(shinythemes)
 library(bslib)
+
