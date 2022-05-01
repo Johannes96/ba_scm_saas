@@ -30,7 +30,7 @@ about_UI <- function(id) {
           withMathJax(),
           p('$$ARR = (Total ~contract ~value / ~billing ~intervall) * 12$$',style="color:black;border:1px solid black;background-color:white"),
           br(),
-          p("Non-recurring revenues, meaning one-time purchases of services/support, are excluded from ARR calculation."
+          p("Non-recurring revenues, meaning one-time purchases of services/support, are excluded from ARR calculation.")
            )
            
            
