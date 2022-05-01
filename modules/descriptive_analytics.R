@@ -33,7 +33,7 @@ descriptive_analytics_UI <- function(id) {
         ),
         column(6, ofset = 3,
                selectizeInput(inputId = ns("SalesTyp"),
-                              label = "Sales-typ",
+                              label = "Sales-type",
                               choices=NULL, 
                               multiple=TRUE)
         )),
@@ -137,7 +137,7 @@ descriptive_analytics <- function(input, output, session) {
   
   # Input Boxes
   updateSelectizeInput(session, "SalesChannel", label="Sales Channel", choices = unique(saas_data$SalesChannel), server=TRUE)
-  updateSelectizeInput(session, "SalesTyp", label="Sales type", choices = unique(saas_data$SalesTyp), server=TRUE)
+  updateSelectizeInput(session, "SalesTyp", label="Sales-type", choices = unique(saas_data$SalesTyp), server=TRUE)
   updateSelectizeInput(session, "CustomerIndustry", label="Customer-Industry", choices = unique(saas_data$CustomerIndustry), server=TRUE)
   updateSliderInput(session, "BillingInterval", label="Billing intervall [Month]", min = min(saas_data$BillingInterval), max = max(saas_data$BillingInterval), value = c(min(saas_data$BillingInterval), max(saas_data$BillingInterval)))
   updateSelectInput(session, "Period", label="Period", choices = unique(saas_data$Period))
