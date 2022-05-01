@@ -28,3 +28,17 @@ Periods <- ordered(saas_data$Period, levels = unique(saas_data$Period))
 Industries <- ordered(saas_data$CustomerIndustry, levels = unique(saas_data$CustomerIndustry))
 
 dbDisconnect(con_saas)
+
+# get data for map
+
+# Read shape file with the rgdal library. 
+world_spdf <- readOGR( 
+  dsn= paste0(getwd(),"/data/world_shape_file/") , 
+  layer="TM_WORLD_BORDERS_SIMPL-0.3",
+  verbose=FALSE
+)
+
+# Clean the data object
+world_spdf@data$POP2005[ which(world_spdf@data$POP2005 == 0)] = NA
+world_spdf@data$POP2005 <- as.numeric(as.character(world_spdf@data$POP2005)) / 1000000 %>% round(2)
+

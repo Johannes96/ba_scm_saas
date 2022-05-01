@@ -52,7 +52,7 @@ descriptive_analytics_UI <- function(id) {
         )), width=3),
       
       mainPanel(
-        plotOutput(ns("plt_test")),
+        leafletOutput(ns("map"), height = "600"),
         textOutput(ns("debug_text"))
         )
       )
@@ -111,18 +111,59 @@ descriptive_analytics <- function(input, output, session) {
 
 # Plot --------------------------------------------------------------------
 
+ # output$plt_test <- renderPlot({
+ # 
+ #   df_plt_temp <- saas_data %>%
+ #     filter(Industries %in% c(input$CustomerIndustry))
+ # 
+ #   p <- ggplot(df_plt_temp, aes(ARR)) +
+ #     geom_histogram()
+ # 
+ #   print(p)
+ #  })
+  
 
- output$plt_test <- renderPlot({
+# map ---------------------------------------------------------------------
 
-   df_plt_temp <- saas_data %>%
-     filter(Industries %in% c(input$CustomerIndustry))
-
-   p <- ggplot(df_plt_temp, aes(ARR)) +
-     geom_histogram()
-
-   print(p)
+  output$map <- renderLeaflet({
+    #TODO
+    # check if country names of saas data coincide with world_spdf
+    # map data from saas (group by country and aggregate f.e. number of customers...)
+    
+    mybins <- c(0,10,20,50,100,500,Inf)
+    mypalette <- colorBin( palette="YlOrBr", domain=world_spdf@data$POP2005, na.color="transparent", bins=mybins)
+    
+    # Prepare the text for tooltips
+    mytext <- paste(
+      "Country: ", world_spdf@data$NAME,"<br/>", 
+      "Area: ", world_spdf@data$AREA, "<br/>", 
+      "Population: ", round(world_spdf@data$POP2005, 2), 
+      sep="") %>%
+      lapply(htmltools::HTML)
+    
+    # create map
+    leaflet(world_spdf) %>% 
+      addTiles()  %>% 
+      setView( lat=10, lng=0 , zoom=2) %>%
+      addPolygons( 
+        fillColor = ~mypalette(POP2005), 
+        stroke=TRUE, 
+        fillOpacity = 0.9, 
+        color="white", 
+        weight=0.3,
+        label = mytext,
+        labelOptions = labelOptions( 
+          style = list("font-weight" = "normal", padding = "3px 8px"), 
+          textsize = "13px", 
+          direction = "auto"
+        )
+      ) %>%
+      addLegend( pal=mypalette, values=~POP2005, opacity=0.9, title = "Population (M)", position = "bottomleft" )
+    
   })
   
+  
+  # text output for debugging  
   output$debug_text <- renderText({
 
     paste("input customer industry: ", input$IndustryFinder)
@@ -133,7 +174,6 @@ descriptive_analytics <- function(input, output, session) {
 
   
 # Generate UI -------------------------------------------------------------
-
   
   # Input Boxes
   updateSelectizeInput(session, "SalesChannel", label="Sales Channel", choices = unique(saas_data$SalesChannel), server=TRUE)
@@ -144,3 +184,4 @@ descriptive_analytics <- function(input, output, session) {
   updateCheckboxGroupInput(session, "ProductType", label="Product-type(s)", choices = unique(saas_data$ProductType), selected = c("Cloud" = "Cloud", "On Premises", "Hybrid"))
   
 }
+

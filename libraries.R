@@ -5,6 +5,7 @@ library(tidyverse)
 library(data.table)
 library(lubridate)
 library(readxl)
+library(rgdal)
 
 
 # Database ----------------------------------------------------------------
@@ -24,6 +25,7 @@ library(ggplot2)
 library(DT)
 library(reactable)
 library(rpivotTable)
+library(RColorBrewer)
 
 
 # Machine Learning --------------------------------------------------------
