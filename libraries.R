@@ -35,3 +35,13 @@ library(forecast)
 library(shinythemes)
 library(bslib)
 
+
+# Download function -------------------------------------------------------
+library(tidyverse)
+library(dplyr)
+library(readr)
+library(rvest)
+library(writexl)
+library(htmlwidgets)
+library(shinyjs)
+library(clipr)

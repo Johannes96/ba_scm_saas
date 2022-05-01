@@ -19,7 +19,9 @@ customer_analytics_server <- function(input, output, session) {
                 cols = "Period",
                 aggregatorName = "Sum",
                 vals = "ARR",
-                rendererName = "Heatmap")
+                rendererName = "Heatmap",
+                width=4, 
+                height=4)
   })
   
 }
