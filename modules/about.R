@@ -28,7 +28,9 @@ about_UI <- function(id) {
               p("Source:", a("Zuora: Annual Recurring Revenue: What is ARR & How to Calculate It", href = "https://www.zuora.com/billing-topics/annual-recurring-revenue/"), ".")),
           p(style="color:black;text-align:justify"),
           withMathJax(),
-          p('$$ARR = (Total ~contract ~value / ~billing ~intervall) * 12$$',style="color:black;border:1px solid black;background-color:white")
+          p('$$ARR = (Total ~contract ~value / ~billing ~intervall) * 12$$',style="color:black;border:1px solid black;background-color:white"),
+          br(),
+          p("Non-recurring revenues, meaning one-time purchases of services/support, are excluded from ARR calculation."
            )
            
            
