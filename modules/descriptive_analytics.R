@@ -141,6 +141,6 @@ descriptive_analytics <- function(input, output, session) {
   updateSelectizeInput(session, "CustomerIndustry", label="Customer-Industry", choices = unique(saas_data$CustomerIndustry), server=TRUE)
   updateSliderInput(session, "BillingInterval", label="Billing intervall [Month]", min = min(saas_data$BillingInterval), max = max(saas_data$BillingInterval), value = c(min(saas_data$BillingInterval), max(saas_data$BillingInterval)))
   updateSelectInput(session, "Period", label="Period", choices = unique(saas_data$Period))
-  updateCheckboxGroupInput(session, "ProductType", label="Product-type(s)", choices = unique(saas_data$ProductType))
+  updateCheckboxGroupInput(session, "ProductType", label="Product-type(s)", choices = unique(saas_data$ProductType), selected = c("Cloud" = "Cloud", "On Premises", "Hybrid"))
   
 }

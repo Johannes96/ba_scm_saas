@@ -43,7 +43,7 @@ predictive_analytics_UI <- function(id) {
                         checkboxGroupInput(inputId = ns("ProductType"),
                                            label = "Product-type(s):",
                                            choices = unique(saas_data$ProductType),
-                                           selected = c("Cloud" = "Cloud", "On Premises", "Hybrid")),
+                                           selected = NULL),
                         
                         # Set Billing Intervall
                         sliderInput(inputId = ns("BillingInterval"),
@@ -86,12 +86,12 @@ predictive_analytics <- function(input, output, session) {
     filter$SalesTyp <- if(is.null(selected$SalesTyp)) unique(saas_data$SalesTyp) else selected$SalesTyp
   })
   
-  observeEvent(eventExpr = input$CustomerIndustry, ignoreNULL = FALSE, ignoreInit = TRUE, {
+  observeEvent(eventExpr = input$CustomerIndustry, ignoreNULL = FALSE, ignoreInit = TRUE,{
     selected$CustomerIndustry <- input$CustomerIndustry
     filter$CustomerIndustry <- if(is.null(selected$CustomerIndustry)) unique(saas_data$CustomerIndustry) else selected$CustomerIndustry
   })
   
-  observeEvent(eventExpr = input$ProductType, ignoreNULL = FALSE, ignoreInit = TRUE, {
+  observeEvent(eventExpr = input$ProductType, ignoreNULL = FALSE, ignoreInit = TRUE,{
     selected$ProductType <- input$ProductType
     filter$ProductType <- if(is.null(selected$ProductType)) unique(saas_data$ProductType) else selected$ProductType
   })
@@ -110,7 +110,7 @@ predictive_analytics <- function(input, output, session) {
   updateSelectizeInput(session, "SalesTyp", label="Sales-type", choices = unique(saas_data$SalesTyp), server=TRUE)
   updateSelectizeInput(session, "CustomerIndustry", label="Customer-Industry", choices = unique(saas_data$CustomerIndustry), server=TRUE)
   updateSliderInput(session, "BillingInterval", label="Billing intervall [Month]", min = min(saas_data$BillingInterval), max = max(saas_data$BillingInterval), value = c(min(saas_data$BillingInterval), max(saas_data$BillingInterval)))
-  updateCheckboxGroupInput(session, "ProductType", label="Product-type(s)", choices = unique(saas_data$ProductType))
+  updateCheckboxGroupInput(session, "ProductType", label="Product-type(s)", choices = unique(saas_data$ProductType), selected = c("Cloud" = "Cloud", "On Premises", "Hybrid"))
   
 
   
