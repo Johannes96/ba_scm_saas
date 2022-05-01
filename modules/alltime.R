@@ -1,4 +1,4 @@
-customer_analytics_UI <- function(id) {
+alltime_UI <- function(id) {
   ns <- NS(id)
   
   tagList(
@@ -10,16 +10,16 @@ customer_analytics_UI <- function(id) {
   
 }
 
-customer_analytics_server <- function(input, output, session) {
+alltime_server <- function(input, output, session) {
   
   
   output$pivot_saas <-renderRpivotTable({
     rpivotTable(saas_data, 
-                rows = c("SalesChannel", "SalesTyp", "SalesRep"),
+                rows = "CustomerIndustry",
                 cols = "Period",
                 aggregatorName = "Sum",
                 vals = "ARR",
-                rendererName = "Heatmap")
+                rendererName = "Stacked Bar Chart")
   })
   
 }
