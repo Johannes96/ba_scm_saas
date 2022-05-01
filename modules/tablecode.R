@@ -1,4 +1,4 @@
-customer_analytics_UI <- function(id) {
+xxx_UI <- function(id) {
   ns <- NS(id)
   
   tagList(
@@ -16,7 +16,7 @@ customer_analytics_UI <- function(id) {
   
 }
 
-customer_analytics_server <- function(input, output, session) {
+xxx_server <- function(input, output, session) {
   
   
   output$report_info_2 <- renderText({
