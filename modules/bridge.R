@@ -12,7 +12,7 @@ bridge_UI <- function(id) {
                         selectInput(inputId = ns("Period"),
                                     label = "Period",
                                     choices = unique(saas_data$Period),
-                                    selected = "2022-03-01")
+                                    selected = "2020-10-01")
                 ) 
               )               
           , width=2),
@@ -23,11 +23,22 @@ bridge_UI <- function(id) {
   )
 }
 
+## Server ------------------------------------------------------------------
 
 bridge <- function(input, output, session) {
   
-
-## Server ------------------------------------------------------------------
+  selected <- reactiveValues()
+  filter <- reactiveValues(Period = unique(saas_data$Period))
+                           
+                             
+  observeEvent(eventExpr = input$Period, ignoreNULL = FALSE, ignoreInit = TRUE, {
+    selected$Period <- input$Period
+    filter$Period <- if(is.null(selected$Period)) unique(saas_data$Period) else selected$Period
+  })
+  
+  # Input Boxes
+  updateSelectInput(session, "Period", label="Period", choices = unique(saas_data$Period), selected = "2020-10-01")
+  
 
 # Prepare dataframe -------------------------------------------------------
 
@@ -114,17 +125,23 @@ bridge_2020_10 <- bridge %>%
 bridge_2020_10 <- rbindlist(list(as.list(PeriodARR[1,]), bridge_2020_10), use.names=FALSE)
 
 
-
+bridgetable <- ifelse(period_data == "2020-10-01", bridge_2020_10,
+                      ) 
 
 
 
 # Create plot -------------------------------------------------------------
 
+period_data <- reactive({
+    filter(Period %in% filter$Period)
+})
+
+
 
 output$ARRBridge <- renderPlot({
   
-  waterfall(bridge_2020_10, calc_total = TRUE, total_axis_text="Actual", draw_lines = FALSE, fill_by_sign = FALSE, fill_colours = 3:8, rect_border = NA)
-  
+  waterfall(bridgetable, calc_total = TRUE, total_axis_text="Actual", draw_lines = FALSE, fill_by_sign = FALSE, fill_colours = 3:8, rect_border = NA)
+   
 })
 
 
