@@ -24,6 +24,6 @@ bridge$"Dif_2020-10" <- format(round((bridge$"2020-10-01" - bridge$"2020-09-01")
 #Create categories
 bridge$"Change_2020-10" <- ifelse((bridge$"2020-09-01" > bridge$"2020-10-01"& bridge$"2020-10-01" != 0), "Contraction",
                                   ifelse((bridge$"2020-09-01" < bridge$"2020-10-01"& bridge$"2020-09-01" != 0), "Expansion",
-                                         ifelse((bridge$"2020-09-01" ==  0 & bridge$"Dif_2020-09" != 0 & bridge$"2020-10-01" != 0), "New",
-                                                ifelse((bridge$"2020-10-01" ==  0 & bridge$"Dif_2020-09" != 0 & bridge$"2020-09-01" != 0), "Churn", "No change"))))
+                                         ifelse((bridge$"2020-09-01" ==  0 & bridge$"Dif_2020-10" != 0 & bridge$"2020-10-01" != 0), "New",
+                                                ifelse((bridge$"2020-10-01" ==  0 & bridge$"Dif_2020-10" != 0 & bridge$"2020-09-01" != 0), "Churn", "No change"))))
 
