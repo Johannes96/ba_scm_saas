@@ -4,15 +4,18 @@ ui <- fluidPage(theme = shinytheme("flatly"),
     navbarPage(
     theme = "flatly",
     "SaaS Data Analysis",
-    tabPanel("Monthly analysis", descriptive_analytics_UI("descriptive_analytics"), icon = icon("calendar", "f073")),
-    tabPanel("All time analysis", alltime_UI("alltime"), icon = icon("chart-bar")),
+    
+    navbarMenu("Descriptive analytics", icon = icon("chart-bar"),
+                tabPanel("Monthly analysis", descriptive_analytics_UI("descriptive_analytics"), icon = icon("calendar", "f073")),
+                tabPanel("All time analysis", alltime_UI("alltime"), icon = icon("chart-bar")),
+                tabPanel("Employee performance", customer_analytics_UI("customer_analytics"), icon = icon("users"))),
+    
     tabPanel("Forecast", predictive_analytics_UI("predictive_analytics"), icon = icon("chart-line")),
-    tabPanel("Employee performance", customer_analytics_UI("customer_analytics"), icon = icon("users")),
+    
     navbarMenu("More", icon = icon("cogs"),
                tabPanel("About", about_UI("about"), icon = icon("info")),
                tabPanel("panel 4b", "four-b"),
-               tabPanel("panel 4c", "four-c")
-    )
+               tabPanel("panel 4c", "four-c"))
   )
 )
 
