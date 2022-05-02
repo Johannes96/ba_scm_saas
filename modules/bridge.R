@@ -1,9 +1,6 @@
 
 
-#probe <- dcast(saas_data, CustomerID ~ Period)
-
-
-# Prepara dataframe -------------------------------------------------------
+# Prepare dataframe -------------------------------------------------------
 
 saas_data_temp <- saas_data %>% select(CustomerID, Period, CustomerIndustry, SalesChannel, SalesTyp, ARR)
 saas_data_temp <- saas_data_temp %>% 
@@ -19,11 +16,87 @@ bridge <- pivot_wider(saas_data_temp, names_from = Period, values_from = TotalAR
 bridge[is.na(bridge)] <- 0.00
 TotalARR <- format(round(saas_data_temp$TotalARR, 2), nsmall = 2)
 
-bridge$"Dif_2020-10" <- format(round((bridge$"2020-10-01" - bridge$"2020-09-01"), 2), nsmall = 2)
+#Calculate differences
+
+bridge$"Dif202010" <- (bridge$"2020-10-01" - bridge$"2020-09-01")
+transform(bridge, Dif202010 = as.numeric(Dif202010))
+     
 
 #Create categories
-bridge$"Change_2020-10" <- ifelse((bridge$"2020-09-01" > bridge$"2020-10-01"& bridge$"2020-10-01" != 0), "Contraction",
+
+bridge$"Change202010" <- ifelse((bridge$"2020-09-01" > bridge$"2020-10-01"& bridge$"2020-10-01" != 0), "Contraction",
                                   ifelse((bridge$"2020-09-01" < bridge$"2020-10-01"& bridge$"2020-09-01" != 0), "Expansion",
-                                         ifelse((bridge$"2020-09-01" ==  0 & bridge$"Dif_2020-10" != 0 & bridge$"2020-10-01" != 0), "New",
-                                                ifelse((bridge$"2020-10-01" ==  0 & bridge$"Dif_2020-10" != 0 & bridge$"2020-09-01" != 0), "Churn", "No change"))))
+                                         ifelse((bridge$"2020-09-01" ==  0 & bridge$"Dif202010" != 0 & bridge$"2020-10-01" != 0), "New",
+                                                ifelse((bridge$"2020-10-01" ==  0 & bridge$"Dif202010" != 0 & bridge$"2020-09-01" != 0), "Churn", "No change"))))
+
+
+# Sum ARR for each month --------------------------------------------------
+
+PeriodARR <- data.table(Period = c("2020-09-01",
+                                   "2020-10-01",
+                                   "2020-11-01",
+                                   "2020-12-01",
+                                   "2021-01-01",
+                                   "2021-02-01",
+                                   "2021-03-01",
+                                   "2021-04-01",
+                                   "2021-05-01",
+                                   "2021-06-01",
+                                   "2021-07-01",
+                                   "2021-08-01",
+                                   "2021-09-01",
+                                   "2021-10-01",
+                                   "2021-11-01",
+                                   "2021-12-01",
+                                   "2022-01-01",
+                                   "2022-02-01",
+                                   "2022-03-01"
+),
+PeriodARR = c("2020-09-01"=sum(bridge$"2020-09-01"),
+              "2020-10-01"=sum(bridge$"2020-10-01"),
+              "2020-11-01"=sum(bridge$"2020-11-01"),
+              "2020-12-01"=sum(bridge$"2020-12-01"),
+              "2021-01-01"=sum(bridge$"2021-01-01"),
+              "2021-02-01"=sum(bridge$"2021-02-01"),
+              "2021-03-01"=sum(bridge$"2021-03-01"),
+              "2021-04-01"=sum(bridge$"2021-04-01"),
+              "2021-05-01"=sum(bridge$"2021-05-01"),
+              "2021-06-01"=sum(bridge$"2021-06-01"),
+              "2021-07-01"=sum(bridge$"2021-07-01"),
+              "2021-08-01"=sum(bridge$"2021-08-01"),
+              "2021-09-01"=sum(bridge$"2021-09-01"),
+              "2021-10-01"=sum(bridge$"2021-10-01"),
+              "2021-11-01"=sum(bridge$"2021-11-01"),
+              "2021-12-01"=sum(bridge$"2021-12-01"),
+              "2022-01-01"=sum(bridge$"2022-01-01"),
+              "2022-02-01"=sum(bridge$"2022-02-01"),
+              "2022-03-01"=sum(bridge$"2022-03-01")
+))
+
+
+
+# Create bridge -----------------------------------------------------------
+
+bridge_2020_10 <- bridge %>% 
+                  group_by(Change202010) %>%
+                  summarise(ARRGrouped = sum(Dif202010)) %>%
+                  ungroup()
+
+bridge_2020_10 <- rbindlist(list(as.list(PeriodARR[1,]), bridge_2020_10, as.list(PeriodARR[2,])), use.names=FALSE)
+
+
+
+
+
+
+# Create plot -------------------------------------------------------------
+
+
+
+
+
+
+
+
+
 
