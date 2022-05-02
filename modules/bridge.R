@@ -1,4 +1,14 @@
 
+# UI ----------------------------------------------------------------------
+
+bridge_UI <- function(id) {
+}
+
+
+bridge <- function(input, output, session) {
+  
+
+## Server ------------------------------------------------------------------
 
 # Prepare dataframe -------------------------------------------------------
 
@@ -82,7 +92,7 @@ bridge_2020_10 <- bridge %>%
                   summarise(ARRGrouped = sum(Dif202010)) %>%
                   ungroup()
 
-bridge_2020_10 <- rbindlist(list(as.list(PeriodARR[1,]), bridge_2020_10, as.list(PeriodARR[2,])), use.names=FALSE)
+bridge_2020_10 <- rbindlist(list(as.list(PeriodARR[1,]), bridge_2020_10), use.names=FALSE)
 
 
 
@@ -91,6 +101,7 @@ bridge_2020_10 <- rbindlist(list(as.list(PeriodARR[1,]), bridge_2020_10, as.list
 
 # Create plot -------------------------------------------------------------
 
+waterfall(bridge_2020_10, calc_total = TRUE, total_axis_text="Actual", draw_lines = FALSE, fill_by_sign = FALSE, fill_colours = 3:8, rect_border = NA)
 
 
 
@@ -100,3 +111,4 @@ bridge_2020_10 <- rbindlist(list(as.list(PeriodARR[1,]), bridge_2020_10, as.list
 
 
 
+}

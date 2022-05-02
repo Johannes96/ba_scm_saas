@@ -26,7 +26,7 @@ library(DT)
 library(reactable)
 library(rpivotTable)
 library(RColorBrewer)
-
+library(waterfalls)
 
 # Machine Learning --------------------------------------------------------
 library(forecast)
@@ -37,18 +37,6 @@ library(forecast)
 library(shinythemes)
 library(bslib)
 library(dplyr)
+library(fontawesome)
 
 
-
-# Download function -------------------------------------------------------
-library(tidyverse)
-library(dplyr)
-library(readr)
-library(reshape2)
-
-library(rvest)
-library(writexl)
-library(htmlwidgets)
-library(shinyjs)
-library(clipr)
-library(tidyr)
