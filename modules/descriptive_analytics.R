@@ -14,7 +14,7 @@ descriptive_analytics_UI <- function(id) {
                         selectInput(inputId = ns("Period"),
                                     label = "Period",
                                     choices = unique(saas_data$Period),
-                                    selected = "2022-03-01",
+                                    selected = "2022-03-01"
                         
                         ),
                         

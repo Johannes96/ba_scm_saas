@@ -38,5 +38,5 @@ library(shinythemes)
 library(bslib)
 library(dplyr)
 library(fontawesome)
-
+library(ggalluvial)
 

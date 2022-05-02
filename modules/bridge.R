@@ -2,6 +2,25 @@
 # UI ----------------------------------------------------------------------
 
 bridge_UI <- function(id) {
+  ns <- NS(id)
+  tagList(
+    sidebarLayout(
+      sidebarPanel(
+        titlePanel("Filter"),
+        fluidRow(column(12,
+                        # Select Period
+                        selectInput(inputId = ns("Period"),
+                                    label = "Period",
+                                    choices = unique(saas_data$Period),
+                                    selected = "2022-03-01")
+                ) 
+              )               
+          , width=2),
+          mainPanel(
+            plotOutput(ns("ARRBridge"))
+      )
+    )
+  )
 }
 
 
@@ -101,8 +120,12 @@ bridge_2020_10 <- rbindlist(list(as.list(PeriodARR[1,]), bridge_2020_10), use.na
 
 # Create plot -------------------------------------------------------------
 
-waterfall(bridge_2020_10, calc_total = TRUE, total_axis_text="Actual", draw_lines = FALSE, fill_by_sign = FALSE, fill_colours = 3:8, rect_border = NA)
 
+output$ARRBridge <- renderPlot({
+  
+  waterfall(bridge_2020_10, calc_total = TRUE, total_axis_text="Actual", draw_lines = FALSE, fill_by_sign = FALSE, fill_colours = 3:8, rect_border = NA)
+  
+})
 
 
 

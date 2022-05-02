@@ -122,8 +122,8 @@ yearly_analytics <- function(input, output, session) {
                 hoverinfo="text", text=~format(round(TotalARR, digits=0), big.mark=".", decimal.mark=",")) %>%
       # add_lines(y=fitted(fit), name="Regression Line") %>%
       layout(title="ARR-movement", showlegend=TRUE)
-      
-      
+    
+    
   })
   
   
