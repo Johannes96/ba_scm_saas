@@ -3,7 +3,9 @@ source('global.R')
 ui <- fluidPage(theme = shinytheme("flatly"),
     navbarPage(
     theme = "flatly",
-    "SaaS Data Analysis",
+    "Dive Insight",
+    
+    tabPanel("Welcome", welcome_UI("welcome"), icon = icon("globe")),
     
     navbarMenu("Descriptive analytics", icon = icon("chart-bar"),
                 tabPanel("Monthly analysis", descriptive_analytics_UI("descriptive_analytics"), icon = icon("calendar", "f073")),
@@ -21,6 +23,7 @@ ui <- fluidPage(theme = shinytheme("flatly"),
 
 server <- function(input, output) {
 
+    callModule(welcome, "welcome")
     callModule(descriptive_analytics, "descriptive_analytics")
     callModule(alltime_server, "alltime")
     callModule(predictive_analytics, "predictive_analytics")
