@@ -8,8 +8,8 @@ bridge_UI <- function(id) {
       sidebarPanel(
         titlePanel("Filter"),
         fluidRow(column(12,
-                        # Select Period
-                        selectInput(inputId = ns("Period"),
+                        # Select Month
+                        selectInput(inputId = ns("Month"),
                                     label = "Period",
                                     choices = unique(saas_data$Period),
                                     selected = "2020-10-01")
@@ -28,16 +28,16 @@ bridge_UI <- function(id) {
 bridge <- function(input, output, session) {
   
   selected <- reactiveValues()
-  filter <- reactiveValues(Period = unique(saas_data$Period))
+  filter <- reactiveValues(Month = unique(saas_data$Period))
                            
                              
-  observeEvent(eventExpr = input$Period, ignoreNULL = FALSE, ignoreInit = TRUE, {
-    selected$Period <- input$Period
-    filter$Period <- if(is.null(selected$Period)) unique(saas_data$Period) else selected$Period
+  observeEvent(eventExpr = input$Month, ignoreNULL = FALSE, ignoreInit = TRUE, {
+    selected$Month <- input$Month
+    filter$Month <- if(is.null(selected$Month)) unique(saas_data$Period) else selected$Period
   })
   
   # Input Boxes
-  updateSelectInput(session, "Period", label="Period", choices = unique(saas_data$Period), selected = "2020-10-01")
+  updateSelectInput(session, "Month", label="Period", choices = unique(saas_data$Period), selected = "2020-10-01")
   
 
 # Prepare dataframe -------------------------------------------------------
@@ -58,96 +58,91 @@ TotalARR <- format(round(saas_data_temp$TotalARR, 2), nsmall = 2)
 
 #Calculate differences
 
-bridge$"Dif202010" <- (bridge$"2020-10-01" - bridge$"2020-09-01")
-transform(bridge, Dif202010 = as.numeric(Dif202010))
+period_data <- reactive({
+  filter(Month %in% filter$Month)
+})
+
+
+# alt <-observe({ifelse(input$Month == "2020-10-01", bridge$"2020-09-01",
+#              ifelse(input$Month == "2020-11-01", bridge$"2020-10-01",
+#                     ifelse(input$Month == "2020-12-01", bridge$"2020-11-01",
+#                            ifelse(input$Month == "2021-01-01", bridge$"2020-12-01",
+#                                   ifelse(input$Month == "2021-02-01", bridge$"2021-01-01",
+#                                          ifelse(input$Month == "2021-03-01", bridge$"2021-02-01",
+#                                                 ifelse(input$Month == "2021-04-01", bridge$"2021-03-01",
+#                                                        ifelse(input$Month == "2021-05-01", bridge$"2021-04-01",
+#                                                               ifelse(input$Month == "2021-06-01", bridge$"2021-05-01",
+#                                                                      ifelse(input$Month == "2021-07-01", bridge$"2021-06-01",
+#                                                                             ifelse(input$Month == "2021-08-01", bridge$"2021-07-01",
+#                                                                                    ifelse(input$Month == "2021-09-01", bridge$"2021-08-01",
+#                                                                                           ifelse(input$Month == "2021-10-01", bridge$"2021-09-01",
+#                                                                                                  ifelse(input$Month == "2021-11-01", bridge$"2021-10-01",
+#                                                                                                         ifelse(input$Month == "2021-12-01", bridge$"2021-11-01",
+#                                                                                                                ifelse(input$Month == "2022-01-01", bridge$"2021-12-01",
+#                                                                                                                       ifelse(input$Month == "2022-02-01", bridge$"2022-01-01",
+#                                                                                                                              ifelse(input$Month == "2021-03-01", bridge$"2021-02-01",bridge$"2020-09-01"
+#                                                                                                                                     
+#              
+#       ))))))))))))))))))})
+# 
+# 
+# neu <-observe({ifelse(input$Month == "2020-10-01", bridge$"2020-10-01",
+#              ifelse(input$Month == "2020-11-01", bridge$"2020-11-01",
+#                     ifelse(input$Month == "2020-12-01", bridge$"2020-12-01",
+#                            ifelse(input$Month == "2021-01-01", bridge$"2021-01-01",
+#                                   ifelse(input$Month == "2021-02-01", bridge$"2021-02-01",
+#                                          ifelse(input$Month == "2021-03-01", bridge$"2021-03-01",
+#                                                 ifelse(input$Month == "2021-04-01", bridge$"2021-04-01",
+#                                                        ifelse(input$Month == "2021-05-01", bridge$"2021-05-01",
+#                                                               ifelse(input$Month == "2021-06-01", bridge$"2021-06-01",
+#                                                                      ifelse(input$Month == "2021-07-01", bridge$"2021-07-01",
+#                                                                             ifelse(input$Month == "2021-08-01", bridge$"2021-08-01",
+#                                                                                    ifelse(input$Month == "2021-09-01", bridge$"2021-09-01",
+#                                                                                           ifelse(input$Month == "2021-10-01", bridge$"2021-10-01",
+#                                                                                                  ifelse(input$Month == "2021-11-01", bridge$"2021-11-01",
+#                                                                                                         ifelse(input$Month == "2021-12-01", bridge$"2021-12-01",
+#                                                                                                                ifelse(input$Month == "2022-01-01", bridge$"2022-01-01",
+#                                                                                                                       ifelse(input$Month == "2022-02-01", bridge$"2022-02-01",
+#                                                                                                                              ifelse(input$Month == "2021-03-01", bridge$"2021-03-01", bridge$"2020-10-01"
+#                                                                                                                                     
+#                                                                                                                                     
+#       ))))))))))))))))))})
+
+alt <- bridge$"2022-02-01"
+neu <- bridge$"2022-03-01"
+
+
+bridge$"Dif" <- (neu - alt)
+transform(bridge, Dif = as.numeric(Dif))
      
 
 #Create categories
 
-bridge$"Change202010" <- ifelse((bridge$"2020-09-01" > bridge$"2020-10-01"& bridge$"2020-10-01" != 0), "Contraction",
-                                  ifelse((bridge$"2020-09-01" < bridge$"2020-10-01"& bridge$"2020-09-01" != 0), "Expansion",
-                                         ifelse((bridge$"2020-09-01" ==  0 & bridge$"Dif202010" != 0 & bridge$"2020-10-01" != 0), "New",
-                                                ifelse((bridge$"2020-10-01" ==  0 & bridge$"Dif202010" != 0 & bridge$"2020-09-01" != 0), "Churn", "No change"))))
-
-
-# Sum ARR for each month --------------------------------------------------
-
-PeriodARR <- data.table(Period = c("2020-09-01",
-                                   "2020-10-01",
-                                   "2020-11-01",
-                                   "2020-12-01",
-                                   "2021-01-01",
-                                   "2021-02-01",
-                                   "2021-03-01",
-                                   "2021-04-01",
-                                   "2021-05-01",
-                                   "2021-06-01",
-                                   "2021-07-01",
-                                   "2021-08-01",
-                                   "2021-09-01",
-                                   "2021-10-01",
-                                   "2021-11-01",
-                                   "2021-12-01",
-                                   "2022-01-01",
-                                   "2022-02-01",
-                                   "2022-03-01"
-),
-PeriodARR = c("2020-09-01"=sum(bridge$"2020-09-01"),
-              "2020-10-01"=sum(bridge$"2020-10-01"),
-              "2020-11-01"=sum(bridge$"2020-11-01"),
-              "2020-12-01"=sum(bridge$"2020-12-01"),
-              "2021-01-01"=sum(bridge$"2021-01-01"),
-              "2021-02-01"=sum(bridge$"2021-02-01"),
-              "2021-03-01"=sum(bridge$"2021-03-01"),
-              "2021-04-01"=sum(bridge$"2021-04-01"),
-              "2021-05-01"=sum(bridge$"2021-05-01"),
-              "2021-06-01"=sum(bridge$"2021-06-01"),
-              "2021-07-01"=sum(bridge$"2021-07-01"),
-              "2021-08-01"=sum(bridge$"2021-08-01"),
-              "2021-09-01"=sum(bridge$"2021-09-01"),
-              "2021-10-01"=sum(bridge$"2021-10-01"),
-              "2021-11-01"=sum(bridge$"2021-11-01"),
-              "2021-12-01"=sum(bridge$"2021-12-01"),
-              "2022-01-01"=sum(bridge$"2022-01-01"),
-              "2022-02-01"=sum(bridge$"2022-02-01"),
-              "2022-03-01"=sum(bridge$"2022-03-01")
-))
-
+bridge$"Change" <- ifelse((alt > neu & neu != 0), "Contraction",
+                                ifelse((alt < neu & alt != 0), "Expansion",
+                                       ifelse((alt ==  0 & bridge$"Dif" != 0 & neu != 0), "New",
+                                              ifelse((neu ==  0 & bridge$"Dif" != 0 & alt != 0), "Churn", "No change"))))
+#Sum ARR Last Month
+LM <- data.table(Change="Last Month",PeriodARR=sum(alt))
 
 
 # Create bridge -----------------------------------------------------------
 
-bridge_2020_10 <- bridge %>% 
-                  group_by(Change202010) %>%
-                  summarise(ARRGrouped = sum(Dif202010)) %>%
-                  ungroup()
+bridgetable <- bridge %>% 
+                  group_by(Change) %>%
+                  summarise(ARRGrouped = sum(Dif)) %>%
+                  ungroup() 
 
-bridge_2020_10 <- rbindlist(list(as.list(PeriodARR[1,]), bridge_2020_10), use.names=FALSE)
-
-
-bridgetable <- ifelse(period_data == "2020-10-01", bridge_2020_10,
-                      ) 
-
+bridgetable <- rbindlist(list(as.list(LM), bridgetable), use.names=FALSE)
 
 
 # Create plot -------------------------------------------------------------
-
-period_data <- reactive({
-    filter(Period %in% filter$Period)
-})
-
-
 
 output$ARRBridge <- renderPlot({
   
   waterfall(bridgetable, calc_total = TRUE, total_axis_text="Actual", draw_lines = FALSE, fill_by_sign = FALSE, fill_colours = 3:8, rect_border = NA)
    
 })
-
-
-
-
-
 
 
 
