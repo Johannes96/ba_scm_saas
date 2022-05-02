@@ -11,7 +11,7 @@ saas_adr <- dbGetQuery(con_saas, str_SQL_Adr) %>%
   tbl_df() %>%
   mutate(latitude = as.numeric(gsub(pattern = ",", replacement = ".", latitude))) %>% #set column as numeric
   mutate(longitude = as.numeric(gsub(pattern = ",", replacement = ".", longitude))) %>% 
-  mutate(City = trimws(City)) #trim leading and trailing whitespaces
+  mutate(City = trimws(City), Country = trimws(Country)) #trim leading and trailing whitespaces
 
 # get second table, wrangle data and left join it with adresses
 saas_data <- dbGetQuery(con_saas, str_SQL_Saas) %>%
@@ -29,16 +29,38 @@ Industries <- ordered(saas_data$CustomerIndustry, levels = unique(saas_data$Cust
 
 dbDisconnect(con_saas)
 
-# get data for map
+
+# data for map ------------------------------------------------------------
 
 #Read shape file with the rgdal library.
-# world_spdf <- readOGR(
-#   dsn= paste0(getwd(),"/data/world_shape_file/") ,
-#   layer="TM_WORLD_BORDERS_SIMPL-0.3",
-#   verbose=FALSE
-# )
-# 
-# # Clean the data object
-# world_spdf@data$POP2005[ which(world_spdf@data$POP2005 == 0)] = NA
-# world_spdf@data$POP2005 <- as.numeric(as.character(world_spdf@data$POP2005)) / 1000000 %>% round(2)
+world_spdf <- readOGR(
+  dsn= paste0(getwd(),"/data/world_shape_file/"),
+  layer="TM_WORLD_BORDERS_SIMPL-0.3",
+  verbose=FALSE
+)
 
+# Clean the data object
+world_spdf@data$POP2005[ which(world_spdf@data$POP2005 == 0)] = NA
+world_spdf@data$POP2005 <- as.numeric(as.character(world_spdf@data$POP2005)) / 1000000 %>% round(2)
+
+# check if all countries in saas_data exist in world_spdf
+lapply(unique(saas_data$Country), function(country) paste(country, country %in% world_spdf@data$NAME))
+
+# replace wrongly named countries
+world_spdf@data <- world_spdf@data %>%
+  mutate(NAME = case_when(NAME == "Czech Republic" ~ "Czechia",
+                            NAME == "United States" ~ "USA",
+                            TRUE ~ NAME)) %>%
+  left_join(saas_data %>%
+              dplyr::group_by(Country) %>%
+              dplyr::summarise(n_customers = n_distinct(CustomerID),
+                               avg_ARR = mean(ARR),
+                               sum_ARR = sum(ARR)) %>%
+              dplyr::rename(NAME = Country) %>%
+              dplyr::ungroup(), 
+            by = "NAME")
+
+# TODO:
+# change code in descriptive_analytics
+  # define bins
+  # change columns and tooltips
