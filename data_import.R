@@ -60,7 +60,3 @@ world_spdf@data <- world_spdf@data %>%
               dplyr::ungroup(),
             by = "NAME")
 
-# TODO:
-# change code in descriptive_analytics
-  # define bins
-  # change columns and tooltips

@@ -130,14 +130,15 @@ descriptive_analytics <- function(input, output, session) {
     # check if country names of saas data coincide with world_spdf
     # map data from saas (group by country and aggregate f.e. number of customers...)
     
-    mybins <- c(0,10,20,50,100,500,Inf)
-    mypalette <- colorBin( palette="YlOrBr", domain=world_spdf@data$POP2005, na.color="transparent", bins=mybins)
+    mybins <- c(0,1000,2000,3000,4000,5000,6000,7000,Inf)
+    mypalette <- colorBin( palette="YlOrBr", domain=world_spdf@data$avg_ARR, na.color="transparent", bins=mybins)
     
     # Prepare the text for tooltips
     mytext <- paste(
-      "Country: ", world_spdf@data$NAME,"<br/>", 
-      "Area: ", world_spdf@data$AREA, "<br/>", 
-      "Population: ", round(world_spdf@data$POP2005, 2), 
+      "Land: ", world_spdf@data$NAME,"<br/>", 
+      "Kunden: ", world_spdf@data$n_customers, "<br/>", 
+      "Average ARR: ", round(world_spdf@data$avg_ARR, 2), "<br/>",
+      "Summe ARR: ", round(world_spdf@data$sum_ARR, 2),
       sep="") %>%
       lapply(htmltools::HTML)
     
@@ -146,7 +147,7 @@ descriptive_analytics <- function(input, output, session) {
       addTiles()  %>% 
       setView( lat=10, lng=0 , zoom=2) %>%
       addPolygons( 
-        fillColor = ~mypalette(POP2005), 
+        fillColor = ~mypalette(avg_ARR), 
         stroke=TRUE, 
         fillOpacity = 0.9, 
         color="white", 
@@ -158,7 +159,7 @@ descriptive_analytics <- function(input, output, session) {
           direction = "auto"
         )
       ) %>%
-      addLegend( pal=mypalette, values=~POP2005, opacity=0.9, title = "Population (M)", position = "bottomleft" )
+      addLegend( pal=mypalette, values=~avg_ARR, opacity=0.9, title = "Average ARR (€)", position = "bottomleft" )
     
   })
   
