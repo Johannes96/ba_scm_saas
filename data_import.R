@@ -57,7 +57,7 @@ world_spdf@data <- world_spdf@data %>%
                                avg_ARR = mean(ARR),
                                sum_ARR = sum(ARR)) %>%
               dplyr::rename(NAME = Country) %>%
-              dplyr::ungroup(), 
+              dplyr::ungroup(),
             by = "NAME")
 
 # TODO:
