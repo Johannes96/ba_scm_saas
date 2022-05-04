@@ -17,7 +17,8 @@ bridge_UI <- function(id) {
               )               
           , width=2),
           mainPanel(
-            plotOutput(ns("ARRBridge"))
+            plotOutput(ns("ARRBridge")),
+            tableOutput(ns("BridgeTable"))
       )
     )
   )
@@ -179,6 +180,8 @@ output$ARRBridge <- renderPlot({
    
 })
 
-
+output$BridgeTable <- renderTable({
+  tmp <- dat()
+  tmp})
 
 }
