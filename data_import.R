@@ -50,13 +50,4 @@ lapply(unique(saas_data$Country), function(country) paste(country, country %in% 
 world_spdf@data <- world_spdf@data %>%
   mutate(NAME = case_when(NAME == "Czech Republic" ~ "Czechia",
                             NAME == "United States" ~ "USA",
-                            TRUE ~ NAME)) %>%
-  left_join(saas_data %>%
-              dplyr::group_by(Country) %>%
-              dplyr::summarise(n_customers = n_distinct(CustomerID),
-                               avg_ARR = mean(ARR),
-                               sum_ARR = sum(ARR)) %>%
-              dplyr::rename(NAME = Country) %>%
-              dplyr::ungroup(),
-            by = "NAME")
-
+                            TRUE ~ NAME))

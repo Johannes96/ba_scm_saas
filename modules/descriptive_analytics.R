@@ -8,52 +8,42 @@ descriptive_analytics_UI <- function(id) {
       sidebarPanel(
         titlePanel("Filters"),
         #shinythemes::themeSelector(),
-        fluidRow(column(12,
+        
+                        # Create DataRangeInput for Period
+                        dateRangeInput(inputId = ns("Period"),
+                                       label = "Period",
+                                       start = min(saas_data$Period),
+                                       end = max(saas_data$Period),
+                                       min = min(saas_data$Period),
+                                       max = max(saas_data$Period)),
                         
-                        # Select Period
-                        selectInput(inputId = ns("Period"),
-                                    label = "Period",
-                                    choices = unique(saas_data$Period),
-                                    selected = "2022-03-01"
-                        
-                        ),
-                        
-                        # Select which Customer-industry(s) to plot
+                        # Create SelectInput for Customer Industry
                         selectizeInput(inputId = ns("CustomerIndustry"),
-                                       label = "Customer-Industry",
-                                       choices = NULL,
-                                       multiple=TRUE
-                        ))),
-        fluidRow(column(6,
-                        # Select which Sales Channel and type to plot
-                        selectizeInput(inputId = ns("SalesChannel"),
-                                       label = "Sales Channel",
-                                       choices=NULL, 
-                                       multiple=TRUE)
-        ),
-        column(6, ofset = 3,
-               selectizeInput(inputId = ns("SalesTyp"),
-                              label = "Sales-type",
-                              choices=NULL, 
-                              multiple=TRUE)
-        )),
-        fluidRow(column(12,
-                        # Select which Product-type(s) to plot
+                                       label = "Customer industry",
+                                       choices = unique(saas_data$CustomerIndustry),
+                                       multiple=TRUE),
+
+                        # Create Checkboxes for Product type
                         checkboxGroupInput(inputId = ns("ProductType"),
-                                           label = "Product-type(s):",
-                                           choices = unique(saas_data$ProductType)),
+                                           label = "Product type",
+                                           choices = unique(saas_data$ProductType)
+                                           ),
                         
-                        # Set Billing Intervall
+                        # Create SliderInput for Billing Interval
                         sliderInput(inputId = ns("BillingInterval"),
                                     label = "Billing intervall [Month]",
                                     min = min(saas_data$BillingInterval),
                                     max = max(saas_data$BillingInterval),
-                                    value = c(min(saas_data$BillingInterval), max(saas_data$BillingInterval)))
-        )), width=3),
+                                    value = c(min(saas_data$BillingInterval), max(saas_data$BillingInterval))),
+        
+                        actionButton(ns("btn_debug"), "debug", icon = icon("bug"))
+      ),
       
       mainPanel(
-        leafletOutput(ns("map"), height = "600"),
-        textOutput(ns("debug_text"))
+        tabsetPanel(
+          tabPanel(title = "Choropleth", leafletOutput(ns("map"), height = "600")),
+          tabPanel(title = "Map Timo")
+        )
         )
       )
     )
@@ -61,77 +51,42 @@ descriptive_analytics_UI <- function(id) {
 }
 
 descriptive_analytics <- function(input, output, session) {
-  
-  
-  selected <- reactiveValues(SalesChannel = NULL,
-                             SalesTyp = NULL,
-                             CustomerIndustry = NULL,
-                             ProductType=NULL,
-                             BillingInterval=NULL,
-                             Period=NULL)
-  
-  filter <- reactiveValues(SalesChannel = unique(saas_data$SalesChannel),
-                           SalesTyp = unique(saas_data$SalesTyp),
-                           CustomerIndustry = unique(saas_data$CustomerIndustry),
-                           ProductType = unique(saas_data$ProductType),
-                           BillingInterval = unique(saas_data$BillingInterval),
-                           Period = unique(saas_data$Period))
-  
-  
-  observeEvent(eventExpr = input$Period, ignoreNULL = FALSE, ignoreInit = TRUE, {
-    selected$Period <- input$Period
-    filter$Period <- if(is.null(selected$Period)) unique(saas_data$Period) else selected$Period
-  })
-  
-  observeEvent(eventExpr = input$SalesChannel, ignoreNULL = FALSE, ignoreInit = TRUE, {
-    selected$SalesChannel <- input$SalesChannel
-    filter$SalesChannel <- if(is.null(selected$SalesChannel)) unique(saas_data$SalesChannel) else selected$SalesChannel
-  })
-  
-  observeEvent(eventExpr = input$SalesTyp, ignoreNULL = FALSE, ignoreInit = TRUE, {
-    selected$SalesTyp <- input$SalesTyp
-    filter$SalesTyp <- if(is.null(selected$SalesTyp)) unique(saas_data$SalesTyp) else selected$SalesTyp
-  })
-  
-  observeEvent(eventExpr = input$CustomerIndustry, ignoreNULL = FALSE, ignoreInit = TRUE, {
-    selected$CustomerIndustry <- input$CustomerIndustry
-    filter$CustomerIndustry <- if(is.null(selected$CustomerIndustry)) unique(saas_data$CustomerIndustry) else selected$CustomerIndustry
-  })
-  
-  observeEvent(eventExpr = input$ProductType, ignoreNULL = FALSE, ignoreInit = TRUE, {
-    selected$ProductType <- input$ProductType
-    filter$ProductType <- if(is.null(selected$ProductType)) unique(saas_data$ProductType) else selected$ProductType
-  })
-  
-  observeEvent(eventExpr = input$BillingInterval, ignoreNULL = FALSE, ignoreInit = TRUE, {
-    selected$BillingInterval <- input$BillingInterval
-    filter$BillingInterval <- if(is.null(selected$BillingInterval)) unique(saas_data$BillingInterval) else selected$BillingInterval
-  }) 
-  
-
-# Plot --------------------------------------------------------------------
-
- # output$plt_test <- renderPlot({
- # 
- #   df_plt_temp <- saas_data %>%
- #     filter(Industries %in% c(input$CustomerIndustry))
- # 
- #   p <- ggplot(df_plt_temp, aes(ARR)) +
- #     geom_histogram()
- # 
- #   print(p)
- #  })
-  
 
 # map ---------------------------------------------------------------------
 
   output$map <- renderLeaflet({
-    #TODO
-    # check if country names of saas data coincide with world_spdf
-    # map data from saas (group by country and aggregate f.e. number of customers...)
     
+    # create temporary data frame
+    saas_data_temp <- saas_data
+    
+    # filter temp data if customer industry is selected
+    if (!is.null(input$CustomerIndustry)) {
+      saas_data_temp <- saas_data_temp %>%
+        dplyr::filter(CustomerIndustry %in% input$CustomerIndustry)
+    }
+    
+    # filter temp data if product types are deselected
+    if (!is.null(input$ProductType)) {
+      saas_data_temp <- saas_data_temp %>%
+        dplyr::filter(ProductType %in% input$ProductType)
+    }
+    
+    # join spatial data with saas data
+    world_spdf@data <- world_spdf@data %>%
+      left_join(saas_data_temp %>%
+                  dplyr::filter(between(Period, input$Period[1],input$Period[2])) %>%
+                  dplyr::filter(between(BillingInterval, input$BillingInterval[1],input$BillingInterval[2])) %>%
+                  dplyr::group_by(Country) %>%
+                  dplyr::summarise(n_customers = n_distinct(CustomerID),
+                                   avg_ARR = mean(ARR),
+                                   sum_ARR = sum(ARR)) %>%
+                  dplyr::rename(NAME = Country) %>%
+                  dplyr::ungroup(),
+                by = "NAME")
+    
+    # create bins and color palette
     mybins <- c(0,1000,2000,3000,4000,5000,6000,7000,Inf)
-    mypalette <- colorBin( palette="YlOrBr", domain=world_spdf@data$avg_ARR, na.color="transparent", bins=mybins)
+    mypalette <- colorBin(palette="YlOrBr", domain=world_spdf@data$avg_ARR, na.color="transparent", bins=mybins)
     
     # Prepare the text for tooltips
     mytext <- paste(
@@ -159,30 +114,16 @@ descriptive_analytics <- function(input, output, session) {
           direction = "auto"
         )
       ) %>%
-      addLegend( pal=mypalette, values=~avg_ARR, opacity=0.9, title = "Average ARR (€)", position = "bottomleft" )
+      addLegend( pal=mypalette, values=~avg_ARR, opacity=0.9, title = "Average ARR (€)", position = "bottomleft")
     
   })
   
-  
-  # text output for debugging  
-  output$debug_text <- renderText({
 
-    paste("input customer industry: ", input$IndustryFinder)
-
+  # button for debugging
+  observeEvent(input$btn_debug, {
+    browser()
+    
   })
 
-
-
-  
-# Generate UI -------------------------------------------------------------
-  
-  # Input Boxes
-  updateSelectizeInput(session, "SalesChannel", label="Sales Channel", choices = unique(saas_data$SalesChannel), server=TRUE)
-  updateSelectizeInput(session, "SalesTyp", label="Sales-type", choices = unique(saas_data$SalesTyp), server=TRUE)
-  updateSelectizeInput(session, "CustomerIndustry", label="Customer-Industry", choices = unique(saas_data$CustomerIndustry), server=TRUE)
-  updateSliderInput(session, "BillingInterval", label="Billing intervall [Month]", min = min(saas_data$BillingInterval), max = max(saas_data$BillingInterval), value = c(min(saas_data$BillingInterval), max(saas_data$BillingInterval)))
-  updateSelectInput(session, "Period", label="Period", choices = unique(saas_data$Period))
-  updateCheckboxGroupInput(session, "ProductType", label="Product-type(s)", choices = unique(saas_data$ProductType), selected = c("Cloud" = "Cloud", "On Premises", "Hybrid"))
-  
 }
 
