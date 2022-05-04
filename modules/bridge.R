@@ -67,6 +67,7 @@ period_data <- "2022-03-01"
 
 alt <-
   #reactive({
+  #observe({
     ifelse(period_data == "2020-10-01", bridge %>% select("2020-09-01"),
              ifelse(period_data == "2020-11-01", bridge %>% select("2020-10-01"),
                     ifelse(period_data == "2020-12-01", bridge %>% select("2020-11-01"),
@@ -88,14 +89,12 @@ alt <-
 
 
       ))))))))))))))))))
-
-#})
-
-
+  #})
 
 
 neu <-
   #reactive({
+  #observe({
     ifelse(period_data == "2020-10-01", bridge %>% select("2020-10-01"),
              ifelse(period_data == "2020-11-01", bridge %>% select("2020-11-01"),
                     ifelse(period_data == "2020-12-01", bridge %>% select("2020-12-01"),
@@ -117,7 +116,7 @@ neu <-
 
 
       ))))))))))))))))))
-#})
+  #})
 
 alt <- data.frame(alt = matrix(unlist(alt), nrow=472, byrow=TRUE),stringsAsFactors=FALSE)
 neu <- data.frame(neu = matrix(unlist(neu), nrow=472, byrow=TRUE),stringsAsFactors=FALSE)
