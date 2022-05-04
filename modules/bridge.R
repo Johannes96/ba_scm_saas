@@ -18,7 +18,7 @@ bridge_UI <- function(id) {
           , width=2),
           mainPanel(
             plotOutput(ns("ARRBridge")),
-            tableOutput(ns("BridgeTable"))
+            DT::dataTableOutput(ns("BridgeTable"))
       )
     )
   )
@@ -180,7 +180,7 @@ output$ARRBridge <- renderPlot({
    
 })
 
-output$BridgeTable <- renderTable({
+output$BridgeTable = DT::renderDataTable({
   tmp <- dat()
   tmp})
 
