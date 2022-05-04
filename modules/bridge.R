@@ -11,7 +11,7 @@ bridge_UI <- function(id) {
                         # Select Month
                         selectInput(inputId = ns("Month"),
                                     label = "Period",
-                                    choices = unique(saas_data$Period),
+                                    choices = c("2020-10-01", "2020-11-01", "2020-12-01", "2021-01-01", "2021-02-01", "2021-03-01", "2021-04-01", "2021-05-01", "2021-06-01", "2021-07-01", "2021-08-01", "2021-09-01", "2021-10-01", "2021-11-01", "2021-12-01", "2022-01-01", "2022-02-01", "2021-03-01"),
                                     selected = "2022-03-01")
                 ) 
               )               
@@ -29,15 +29,18 @@ bridge <- function(input, output, session) {
   
   selected <- reactiveValues()
   filter <- reactiveValues(Month = unique(saas_data$Period))
-                           
-                             
-  observeEvent(eventExpr = period_data, ignoreNULL = FALSE, ignoreInit = TRUE, {
-    selected$Month <- period_data
-    filter$Month <- if(is.null(selected$Month)) unique(saas_data$Period) else selected$Period
+
+
+  observeEvent(eventExpr = input$Month, ignoreNULL = FALSE, ignoreInit = TRUE, {
+    selected$Month <- input$Month
+    filter$Month <- if(is.null(selected$Month)) unique(saas_data$Period) else selected$Month
   })
-  
+
   # Input Boxes
-  updateSelectInput(session, "Month", label="Period", choices = unique(saas_data$Period), selected = "2022-03-01")
+  updateSelectInput(session, "Month", 
+                    label="Period", 
+                    choices = c("2020-10-01", "2020-11-01", "2020-12-01", "2021-01-01", "2021-02-01", "2021-03-01", "2021-04-01", "2021-05-01", "2021-06-01", "2021-07-01", "2021-08-01", "2021-09-01", "2021-10-01", "2021-11-01", "2021-12-01", "2022-01-01", "2022-02-01", "2022-03-01"), 
+                    selected = "2022-03-01")
   
 
 # Prepare dataframe -------------------------------------------------------
@@ -58,65 +61,82 @@ TotalARR <- format(round(saas_data_temp$TotalARR, 2), nsmall = 2)
 
 #Calculate differences
 
-period_data <- reactive({
-  filter(Month %in% filter$Month)
-})
 
-period_data <- "2022-03-01"
+dat <- reactive({
+UserInput <-
+    ifelse(input$Month == "2020-10-01", "2020-10-01",
+             ifelse(input$Month == "2020-11-01", "2020-11-01",
+                    ifelse(input$Month == "2020-12-01", "2020-12-01",
+                           ifelse(input$Month == "2021-01-01", "2021-01-01",
+                                 ifelse(input$Month == "2021-02-01", "2021-02-01",
+                                         ifelse(input$Month == "2021-03-01", "2021-03-01",
+                                                ifelse(input$Month == "2021-04-01", "2021-04-01",
+                                                       ifelse(input$Month == "2021-05-01", "2021-05-01",
+                                                              ifelse(input$Month == "2021-06-01", "2021-06-01",
+                                                                     ifelse(input$Month == "2021-07-01", "2021-07-01",
+                                                                            ifelse(input$Month == "2021-08-01", "2021-08-01",
+                                                                                   ifelse(input$Month == "2021-09-01", "2021-09-01",
+                                                                                          ifelse(input$Month == "2021-10-01", "2021-10-01",
+                                                                                                 ifelse(input$Month == "2021-11-01", "2021-11-01",
+                                                                                                        ifelse(input$Month == "2021-12-01", "2021-12-01",
+                                                                                                               ifelse(input$Month == "2022-01-01", "2022-01-01",
+                                                                                                                      ifelse(input$Month == "2022-02-01", "2022-02-01",
+                                                                                                                             ifelse(input$Month == "2022-03-01", "2022-03-01", "2020-10-01"
+
+
+      ))))))))))))))))))
+ 
 
 
 alt <-
-  #reactive({
-  #observe({
-    ifelse(period_data == "2020-10-01", bridge %>% select("2020-09-01"),
-             ifelse(period_data == "2020-11-01", bridge %>% select("2020-10-01"),
-                    ifelse(period_data == "2020-12-01", bridge %>% select("2020-11-01"),
-                           ifelse(period_data == "2021-01-01", bridge %>% select("2020-12-01"),
-                                 ifelse(period_data == "2021-02-01", bridge %>% select("2021-01-01"),
-                                         ifelse(period_data == "2021-03-01", bridge %>% select("2021-02-01"),
-                                                ifelse(period_data == "2021-04-01", bridge %>% select("2021-03-01"),
-                                                       ifelse(period_data == "2021-05-01", bridge %>% select("2021-04-01"),
-                                                              ifelse(period_data == "2021-06-01", bridge %>% select("2021-05-01"),
-                                                                     ifelse(period_data == "2021-07-01", bridge %>% select("2021-06-01"),
-                                                                            ifelse(period_data == "2021-08-01", bridge %>% select("2021-07-01"),
-                                                                                   ifelse(period_data == "2021-09-01", bridge %>% select("2021-08-01"),
-                                                                                          ifelse(period_data == "2021-10-01", bridge %>% select("2021-09-01"),
-                                                                                                 ifelse(period_data == "2021-11-01", bridge %>% select("2021-10-01"),
-                                                                                                        ifelse(period_data == "2021-12-01", bridge %>% select("2021-11-01"),
-                                                                                                               ifelse(period_data == "2022-01-01", bridge %>% select("2021-12-01"),
-                                                                                                                      ifelse(period_data == "2022-02-01", bridge %>% select("2022-01-01"),
-                                                                                                                             ifelse(period_data == "2021-03-01", bridge %>% select("2021-02-01"), bridge %>% select("2020-09-01")
-
-
-      ))))))))))))))))))
-  #})
+  ifelse(UserInput == "2020-10-01", bridge %>% select("2020-09-01"),
+         ifelse(UserInput == "2020-11-01", bridge %>% select("2020-10-01"),
+                ifelse(UserInput == "2020-12-01", bridge %>% select("2020-11-01"),
+                       ifelse(UserInput == "2021-01-01", bridge %>% select("2020-12-01"),
+                              ifelse(UserInput == "2021-02-01", bridge %>% select("2021-01-01"),
+                                     ifelse(UserInput == "2021-03-01", bridge %>% select("2021-02-01"),
+                                            ifelse(UserInput == "2021-04-01", bridge %>% select("2021-03-01"),
+                                                   ifelse(UserInput == "2021-05-01", bridge %>% select("2021-04-01"),
+                                                          ifelse(UserInput == "2021-06-01", bridge %>% select("2021-05-01"),
+                                                                 ifelse(UserInput == "2021-07-01", bridge %>% select("2021-06-01"),
+                                                                        ifelse(UserInput == "2021-08-01", bridge %>% select("2021-07-01"),
+                                                                               ifelse(UserInput == "2021-09-01", bridge %>% select("2021-08-01"),
+                                                                                      ifelse(UserInput == "2021-10-01", bridge %>% select("2021-09-01"),
+                                                                                             ifelse(UserInput == "2021-11-01", bridge %>% select("2021-10-01"),
+                                                                                                    ifelse(UserInput == "2021-12-01", bridge %>% select("2021-11-01"),
+                                                                                                           ifelse(UserInput == "2022-01-01", bridge %>% select("2021-12-01"),
+                                                                                                                  ifelse(UserInput == "2022-02-01", bridge %>% select("2022-01-01"),
+                                                                                                                         ifelse(UserInput == "2022-03-01", bridge %>% select("2022-02-01"), bridge %>% select("2020-09-01")
+                                                                                                                                
+                                                                                                                                
+                                                                                                                         ))))))))))))))))))
+  
 
 
 neu <-
-  #reactive({
-  #observe({
-    ifelse(period_data == "2020-10-01", bridge %>% select("2020-10-01"),
-             ifelse(period_data == "2020-11-01", bridge %>% select("2020-11-01"),
-                    ifelse(period_data == "2020-12-01", bridge %>% select("2020-12-01"),
-                           ifelse(period_data == "2021-01-01", bridge %>% select("2021-01-01"),
-                                  ifelse(period_data == "2021-02-01", bridge %>% select("2021-02-01"),
-                                         ifelse(period_data == "2021-03-01", bridge %>% select("2021-03-01"),
-                                                ifelse(period_data == "2021-04-01", bridge %>% select("2021-04-01"),
-                                                       ifelse(period_data == "2021-05-01", bridge %>% select("2021-05-01"),
-                                                              ifelse(period_data == "2021-06-01", bridge %>% select("2021-06-01"),
-                                                                     ifelse(period_data == "2021-07-01", bridge %>% select("2021-07-01"),
-                                                                            ifelse(period_data == "2021-08-01", bridge %>% select("2021-08-01"),
-                                                                                   ifelse(period_data == "2021-09-01", bridge %>% select("2021-09-01"),
-                                                                                          ifelse(period_data == "2021-10-01", bridge %>% select("2021-10-01"),
-                                                                                                 ifelse(period_data == "2021-11-01", bridge %>% select("2021-11-01"),
-                                                                                                        ifelse(period_data == "2021-12-01", bridge %>% select("2021-12-01"),
-                                                                                                               ifelse(period_data == "2022-01-01", bridge %>% select("2022-01-01"),
-                                                                                                                      ifelse(period_data == "2022-02-01", bridge %>% select("2022-02-01"),
-                                                                                                                             ifelse(period_data == "2021-03-01", bridge %>% select("2021-03-01"), bridge %>% select("2020-10-01")
+    ifelse(UserInput == "2020-10-01", bridge %>% select("2020-10-01"),
+             ifelse(UserInput == "2020-11-01", bridge %>% select("2020-11-01"),
+                    ifelse(UserInput == "2020-12-01", bridge %>% select("2020-12-01"),
+                           ifelse(UserInput == "2021-01-01", bridge %>% select("2021-01-01"),
+                                  ifelse(UserInput == "2021-02-01", bridge %>% select("2021-02-01"),
+                                         ifelse(UserInput == "2021-03-01", bridge %>% select("2021-03-01"),
+                                                ifelse(UserInput == "2021-04-01", bridge %>% select("2021-04-01"),
+                                                       ifelse(UserInput == "2021-05-01", bridge %>% select("2021-05-01"),
+                                                              ifelse(UserInput == "2021-06-01", bridge %>% select("2021-06-01"),
+                                                                     ifelse(UserInput == "2021-07-01", bridge %>% select("2021-07-01"),
+                                                                            ifelse(UserInput == "2021-08-01", bridge %>% select("2021-08-01"),
+                                                                                   ifelse(UserInput == "2021-09-01", bridge %>% select("2021-09-01"),
+                                                                                          ifelse(UserInput == "2021-10-01", bridge %>% select("2021-10-01"),
+                                                                                                 ifelse(UserInput == "2021-11-01", bridge %>% select("2021-11-01"),
+                                                                                                        ifelse(UserInput == "2021-12-01", bridge %>% select("2021-12-01"),
+                                                                                                               ifelse(UserInput == "2022-01-01", bridge %>% select("2022-01-01"),
+                                                                                                                      ifelse(UserInput == "2022-02-01", bridge %>% select("2022-02-01"),
+                                                                                                                             ifelse(UserInput == "2022-03-01", bridge %>% select("2022-03-01"), bridge %>% select("2020-10-01")
 
 
       ))))))))))))))))))
-  #})
+
+
 
 alt <- data.frame(alt = matrix(unlist(alt), nrow=472, byrow=TRUE),stringsAsFactors=FALSE)
 neu <- data.frame(neu = matrix(unlist(neu), nrow=472, byrow=TRUE),stringsAsFactors=FALSE)
@@ -144,13 +164,18 @@ bridgetable <- bridge %>%
                   ungroup() 
 
 bridgetable <- rbindlist(list(as.list(LM), bridgetable), use.names=FALSE)
+bridgetable
+  })
 
 
 # Create plot -------------------------------------------------------------
 
+
 output$ARRBridge <- renderPlot({
   
-  waterfall(bridgetable, calc_total = TRUE, total_axis_text="Actual", draw_lines = FALSE, fill_by_sign = FALSE, fill_colours = 3:8, rect_border = NA)
+  tmp <- dat()
+  
+  waterfall(tmp, calc_total = TRUE, total_axis_text="Actual", draw_lines = FALSE, fill_by_sign = FALSE, fill_colours = 3:8, rect_border = NA)
    
 })
 
