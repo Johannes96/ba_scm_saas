@@ -1,8 +1,11 @@
 source('global.R')
 
-ui <- fluidPage(theme = shinytheme("flatly"),
+ui <- fluidPage(theme = shinytheme("cosmo"),
+                # setBackgroundImage(
+                #   src = "https://wallpaperbat.com/img/312147-aesthetic-white-geometric-wallpaper-top-free-aesthetic-white.png"
+                # ),            
     navbarPage(
-    theme = "flatly",
+    theme = "cosmo",
     "Dive Insight",
     
     tabPanel("Welcome", welcome_UI("welcome"), icon = icon("globe")),
