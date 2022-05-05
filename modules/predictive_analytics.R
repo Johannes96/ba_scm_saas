@@ -166,8 +166,13 @@ predictive_analytics <- function(input, output, session) {
                       "Neuro" = fc_5)
      
      autoplot(fc_sel) +
-       autolayer(fc_sel$mean, series = "Forecast")
-   })
+       autolayer(fc_sel$mean, series = "Forecast") 
+     #+
+     #  theme(plot.background = element_rect(fill = "transparent"))
+
+   }
+   #, bg="transparent"
+   )
    
  
 
