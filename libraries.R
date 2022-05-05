@@ -39,4 +39,4 @@ library(bslib)
 library(dplyr)
 library(fontawesome)
 library(ggalluvial)
-
+library(gt)

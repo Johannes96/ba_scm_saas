@@ -156,16 +156,18 @@ bridge$"Change" <- ifelse((alt > neu & neu != 0), "Contraction",
 #Sum ARR Last Month
 LM <- data.table(Change="Last Month",PeriodARR=sum(alt))
 
-
 # Create bridge -----------------------------------------------------------
 
 bridgetable <- bridge %>% 
                   group_by(Change) %>%
+                  filter(Change !="No change") %>% 
                   summarise(ARRGrouped = sum(Dif)) %>%
                   ungroup() 
 
 bridgetable <- rbindlist(list(as.list(LM), bridgetable), use.names=FALSE)
+
 bridgetable
+
   })
 
 
@@ -182,6 +184,8 @@ output$ARRBridge <- renderPlot({
 
 output$BridgeTable = DT::renderDataTable({
   tmp <- dat()
-  tmp})
+  tmp} ,options = list(paging = FALSE, 
+                      searching = FALSE
+                      ))
 
 }
