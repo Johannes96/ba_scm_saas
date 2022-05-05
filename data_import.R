@@ -33,11 +33,16 @@ dbDisconnect(con_saas)
 # data for map ------------------------------------------------------------
 
 #Read shape file with the rgdal library.
+# world_spdf <- readOGR(
+#   dsn= paste0(getwd(),"/data/world_shape_file/"),
+#   layer="TM_WORLD_BORDERS_SIMPL-0.3",
+#   verbose=FALSE
+# )
+
 world_spdf <- readOGR(
-  dsn= paste0(getwd(),"/data/world_shape_file/"),
-  layer="TM_WORLD_BORDERS_SIMPL-0.3",
-  verbose=FALSE
+  paste0(getwd(),"/data/world_shape_file/TM_WORLD_BORDERS_SIMPL-0.3.shp")
 )
+
 
 # Clean the data object
 world_spdf@data$POP2005[ which(world_spdf@data$POP2005 == 0)] = NA
