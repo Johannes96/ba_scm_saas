@@ -21,6 +21,12 @@ saas_data <- dbGetQuery(con_saas, str_SQL_Saas) %>%
   mutate(PositionPrice = as.numeric(gsub(pattern = ",", replacement = ".", PositionPrice))) %>%
   mutate(PositionSum = as.numeric(gsub(pattern = ",", replacement = ".", PositionSum))) %>%
   mutate(ARR = as.numeric(gsub(pattern = ",", replacement = ".", ARR))) %>%
+  mutate(CustomerIndustry = case_when(CustomerIndustry == "Transportation and Traffic" ~ "Transport and Traffic",
+                                      CustomerIndustry == "Pharmaceuticals" ~ "Pharmaceutical",
+                                      CustomerIndustry == "Finance Insurance and Legal" ~ "Finance, Insurance and Legal",
+                                      CustomerIndustry == "Telecommunication" ~ "Information Technology and Telecommunication",
+                                      CustomerIndustry == "Information Technology" ~ "Information Technology and Telecommunication",
+                                      TRUE ~ CustomerIndustry)) %>%
   left_join(x = ., y = saas_adr, by = "CustomerID")
 
 # Define values for filter
