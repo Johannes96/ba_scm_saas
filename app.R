@@ -1,6 +1,9 @@
 source('global.R')
 
 ui <- fluidPage(theme = shinytheme("cosmo"),
+                
+                # add css file to customize appearance
+                tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")),
                 # setBackgroundImage(
                 #   src = "https://wallpaperbat.com/img/312147-aesthetic-white-geometric-wallpaper-top-free-aesthetic-white.png"
                 # ),            

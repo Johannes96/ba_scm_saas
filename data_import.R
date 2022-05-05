@@ -62,3 +62,4 @@ world_spdf@data <- world_spdf@data %>%
   mutate(NAME = case_when(NAME == "Czech Republic" ~ "Czechia",
                             NAME == "United States" ~ "USA",
                             TRUE ~ NAME))
+

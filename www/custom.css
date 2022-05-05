@@ -1,0 +1,5 @@
+# red background color for all buttons with id ending in btn_debug
+.btn[id$='btn_debug'] {
+  background-color: #990000;
+  
+}
