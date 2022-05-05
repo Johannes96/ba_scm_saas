@@ -37,7 +37,7 @@ descriptive_analytics_UI <- function(id) {
                                     value = c(min(saas_data$BillingInterval), max(saas_data$BillingInterval))),
         
                         actionButton(ns("btn_debug"), "debug", icon = icon("bug"))
-      ),
+        , width=3),
       
       mainPanel(
         tabsetPanel(

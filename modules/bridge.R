@@ -15,7 +15,7 @@ bridge_UI <- function(id) {
                                     selected = "2022-03")
                 ) 
               )               
-          , width=2),
+          , width=3),
           mainPanel(
             plotOutput(ns("ARRBridge")),
             DT::dataTableOutput(ns("BridgeTable"))
