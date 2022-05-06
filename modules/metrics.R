@@ -137,10 +137,33 @@ metrics <- function(input, output, session) {
                                                                                                                                     
                                                                                                                              ))))))))))))))))))
     
+    # Cost <-
+    #   ifelse(UserInput == "2020-10-01", expenses %>% select("2020-10-01"),
+    #          ifelse(UserInput == "2020-11-01", expenses %>% select("2020-11-01"),
+    #                 ifelse(UserInput == "2020-12-01", expenses %>% select("2020-12-01"),
+    #                        ifelse(UserInput == "2021-01-01", expenses %>% select("2021-01-01"),
+    #                               ifelse(UserInput == "2021-02-01", expenses %>% select("2021-02-01"),
+    #                                      ifelse(UserInput == "2021-03-01", expenses %>% select("2021-03-01"),
+    #                                             ifelse(UserInput == "2021-04-01", expenses %>% select("2021-04-01"),
+    #                                                    ifelse(UserInput == "2021-05-01", expenses %>% select("2021-05-01"),
+    #                                                           ifelse(UserInput == "2021-06-01", expenses %>% select("2021-06-01"),
+    #                                                                  ifelse(UserInput == "2021-07-01", expenses %>% select("2021-07-01"),
+    #                                                                         ifelse(UserInput == "2021-08-01", expenses %>% select("2021-08-01"),
+    #                                                                                ifelse(UserInput == "2021-09-01", expenses %>% select("2021-09-01"),
+    #                                                                                       ifelse(UserInput == "2021-10-01", expenses %>% select("2021-10-01"),
+    #                                                                                              ifelse(UserInput == "2021-11-01", expenses %>% select("2021-11-01"),
+    #                                                                                                     ifelse(UserInput == "2021-12-01", expenses %>% select("2021-12-01"),
+    #                                                                                                            ifelse(UserInput == "2022-01-01", expenses %>% select("2022-01-01"),
+    #                                                                                                                   ifelse(UserInput == "2022-02-01", expenses %>% select("2022-02-01"),
+    #                                                                                                                          ifelse(UserInput == "2022-03-01", expenses %>% select("2022-03-01"), expenses %>% select("2020-10-01")
+    #                                                                                                                                 
+    #                                                                                                                                 
+    #                                                                                                                          ))))))))))))))))))
     
     
     alt <- data.frame(alt = matrix(unlist(alt), nrow=472, byrow=TRUE),stringsAsFactors=FALSE)
     neu <- data.frame(neu = matrix(unlist(neu), nrow=472, byrow=TRUE),stringsAsFactors=FALSE)
+    #Cost <- data.frame(neu = matrix(unlist(Cost), nrow=4, byrow=TRUE),stringsAsFactors=FALSE)
     
     
     
@@ -158,6 +181,9 @@ metrics <- function(input, output, session) {
     
     Cost <- data.table("CostType" = c("Personal expenses Sales", "Referral commission", "Personal expenses Marketing", "Marketing cost"),
                        "Expense"=c(100000,20000,30000,70000))
+    
+    # Cost <- data.table("CostType" = c("Personal expenses Sales", "Referral commission", "Personal expenses Marketing", "Marketing cost"),
+    #                    "Expense"=Cost)
     
     TotalCost <- with(Cost, sum(Expense[CostType == "Personal expenses Sales" | CostType == "Referral commission" | CostType == "Personal expenses Marketing" | CostType == "Marketing cost"]))
     TotalCost <- data.table(Change="Costs of ARR Acquisistion", TotalCost = TotalCost)
