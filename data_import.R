@@ -30,6 +30,16 @@ saas_data <- dbGetQuery(con_saas, str_SQL_Saas) %>%
                                       TRUE ~ CustomerIndustry)) %>%
   left_join(x = ., y = saas_adr, by = "CustomerID")
 
+# get third table expenses
+saas_exp <- dbGetQuery(con_saas, str_SQL_Exp)
+
+saas_exp <- transpose(saas_exp) %>%
+  tbl_df() %>%
+  mutate(Period = dmy(colnames(saas_exp))) %>%
+  slice(-1) %>%
+  rename("Personal expenses Sales" = "V1", "Referral commission" = "V2", "Personal expenses Marketing" = "V3", "Marketing cost" = "V4") %>%
+  mutate_at(1:4, as.numeric)
+
 # Define values for filter
 Periods <- ordered(saas_data$Period, levels = unique(saas_data$Period))
 Industries <- ordered(saas_data$CustomerIndustry, levels = unique(saas_data$CustomerIndustry))
