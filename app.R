@@ -17,7 +17,8 @@ ui <- fluidPage(theme = shinytheme("cosmo"),
                 tabPanel("Geographical analysis", descriptive_analytics_UI("descriptive_analytics"), icon = icon("globe")),
                 tabPanel("All time analysis", alltime_UI("alltime"), icon = icon("chart-bar")),
                 tabPanel("Employee performance", customer_analytics_UI("customer_analytics"), icon = icon("users")),
-                tabPanel("ARR-Bridge", bridge_UI("bridge"), icon = icon("bold"))),
+                tabPanel("ARR-Bridge", bridge_UI("bridge"), icon = icon("bold")),
+                tabPanel("Metrics", metrics_UI("metrics"), icon = icon("calculator"))),
     
     tabPanel("Forecast", predictive_analytics_UI("predictive_analytics"), icon = icon("chart-line")),
     
@@ -41,6 +42,7 @@ server <- function(input, output) {
     callModule(predictive_analytics, "predictive_analytics")
     callModule(customer_analytics_server, "customer_analytics")
     callModule(bridge, "bridge")
+    callModule(metrics, "metrics")
     callModule(about, "about")
 }
 

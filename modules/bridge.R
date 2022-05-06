@@ -62,7 +62,6 @@ TotalARR <- format(round(saas_data_temp$TotalARR, 2), nsmall = 2)
 
 #Calculate differences
 
-
 dat <- reactive({
 UserInput <-
     ifelse(input$Month == "2020-10", "2020-10-01",
@@ -159,8 +158,8 @@ LM <- data.table(Change="Last Month",PeriodARR=sum(alt))
 # Create bridge -----------------------------------------------------------
 
 bridgetable <- bridge %>% 
-                  group_by(Change) %>%
                   filter(Change !="No change") %>% 
+                  group_by(Change) %>%
                   summarise(ARRGrouped = sum(Dif)) %>%
                   ungroup() 
 
