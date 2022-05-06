@@ -11,8 +11,8 @@ metrics_UI <- function(id) {
                         # Select Month
                         selectInput(inputId = ns("Month"),
                                     label = "Period",
-                                    choices = c("2020-10", "2020-11", "2020-12", "2021-01", "2021-02", "2021-03", "2021-04", "2021-05", "2021-06", "2021-07", "2021-08", "2021-09", "2021-10", "2021-11", "2021-12", "2022-01", "2022-02", "2022-03"),
-                                    selected = "2022-03")
+                                    choices =  c("2020-10-01", "2020-11-01", "2020-12-01", "2021-01-01", "2021-02-01", "2021-03-01", "2021-04-01", "2021-05-01", "2021-06-01", "2021-07-01", "2021-08-01", "2021-09-01", "2021-10-01", "2021-11-01", "2021-12-01", "2022-01-01", "2022-02-01", "2022-03-01"),
+                                    selected = "2022-03-01")
         ) 
         )               
         , width=3),
@@ -40,8 +40,8 @@ metrics <- function(input, output, session) {
   # Input Boxes
   updateSelectInput(session, "Month", 
                     label="Period", 
-                    choices = c("2020-10", "2020-11", "2020-12", "2021-01", "2021-02", "2021-03", "2021-04", "2021-05", "2021-06", "2021-07", "2021-08", "2021-09", "2021-10", "2021-11", "2021-12", "2022-01", "2022-02", "2022-03"), 
-                    selected = "2022-03")
+                    choices = c("2020-10-01", "2020-11-01", "2020-12-01", "2021-01-01", "2021-02-01", "2021-03-01", "2021-04-01", "2021-05-01", "2021-06-01", "2021-07-01", "2021-08-01", "2021-09-01", "2021-10-01", "2021-11-01", "2021-12-01", "2022-01-01", "2022-02-01", "2022-03-01"), 
+                    selected = "2022-03-01")
   
   
   # Prepare dataframe -------------------------------------------------------
@@ -65,24 +65,24 @@ metrics <- function(input, output, session) {
 
   dat <- reactive({
     UserInput <-
-      ifelse(input$Month == "2020-10", "2020-10-01",
-             ifelse(input$Month == "2020-11", "2020-11-01",
-                    ifelse(input$Month == "2020-12", "2020-12-01",
-                           ifelse(input$Month == "2021-01", "2021-01-01",
-                                  ifelse(input$Month == "2021-02", "2021-02-01",
-                                         ifelse(input$Month == "2021-03", "2021-03-01",
-                                                ifelse(input$Month == "2021-04", "2021-04-01",
-                                                       ifelse(input$Month == "2021-05", "2021-05-01",
-                                                              ifelse(input$Month == "2021-06", "2021-06-01",
-                                                                     ifelse(input$Month == "2021-07", "2021-07-01",
-                                                                            ifelse(input$Month == "2021-08", "2021-08-01",
-                                                                                   ifelse(input$Month == "2021-09", "2021-09-01",
-                                                                                          ifelse(input$Month == "2021-10", "2021-10-01",
-                                                                                                 ifelse(input$Month == "2021-11", "2021-11-01",
-                                                                                                        ifelse(input$Month == "2021-12", "2021-12-01",
-                                                                                                               ifelse(input$Month == "2022-01", "2022-01-01",
-                                                                                                                      ifelse(input$Month == "2022-02", "2022-02-01",
-                                                                                                                             ifelse(input$Month == "2022-03", "2022-03-01", "2020-10-01"
+      ifelse(input$Month == "2020-10-01", "2020-10-01",
+             ifelse(input$Month == "2020-11-01", "2020-11-01",
+                    ifelse(input$Month == "2020-12-01", "2020-12-01",
+                           ifelse(input$Month == "2021-01-01", "2021-01-01",
+                                  ifelse(input$Month == "2021-02-01", "2021-02-01",
+                                         ifelse(input$Month == "2021-03-01", "2021-03-01",
+                                                ifelse(input$Month == "2021-04-01", "2021-04-01",
+                                                       ifelse(input$Month == "2021-05-01", "2021-05-01",
+                                                              ifelse(input$Month == "2021-06-01", "2021-06-01",
+                                                                     ifelse(input$Month == "2021-07-01", "2021-07-01",
+                                                                            ifelse(input$Month == "2021-08-01", "2021-08-01",
+                                                                                   ifelse(input$Month == "2021-09-01", "2021-09-01",
+                                                                                          ifelse(input$Month == "2021-10-01", "2021-10-01",
+                                                                                                 ifelse(input$Month == "2021-11-01", "2021-11-01",
+                                                                                                        ifelse(input$Month == "2021-12-01", "2021-12-01",
+                                                                                                               ifelse(input$Month == "2022-01-01", "2022-01-01",
+                                                                                                                      ifelse(input$Month == "2022-02-01", "2022-02-01",
+                                                                                                                             ifelse(input$Month == "2022-03-01", "2022-03-01", "2020-10-01"
                                                                                                                                     
                                                                                                                                     
                                                                                                                              ))))))))))))))))))
@@ -188,7 +188,29 @@ metrics <- function(input, output, session) {
     
     metrics <- rbindlist(list(metrics, CombinedCACRatio), use.names=FALSE)
     
+    
+    #Format values
+    
     metrics$Value <- format(round(metrics$Value, 4), nsmall = 4)
+    
+    
+    #Calculate Avg. ARR per Customer
+    
+    saas_data_temp <- saas_data
+    
+    if (!is.null(input$Month)) {
+      saas_data_temp <- saas_data_temp %>%
+        dplyr::filter(Period %in% input$Month)}
+     
+    saas_data_temp <- saas_data_temp %>%
+                      dplyr::summarise(n_customers = n_distinct(CustomerID))
+      
+    saas_data_temp <- data.table(KPI = "Number of customers", Value = saas_data_temp)
+    
+    metrics <- rbindlist(list(metrics, saas_data_temp), use.names=FALSE)
+    
+    
+    #Print Table
     
     metrics
     
