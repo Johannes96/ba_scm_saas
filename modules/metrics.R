@@ -167,7 +167,7 @@ metrics <- function(input, output, session) {
     # Create metrics table -----------------------------------------------------------
     
     metrics <- bridge %>% 
-      filter(Change == c("New", "Expansion")) %>% 
+      filter(Change !="No change") %>% 
       group_by(Change) %>%
       summarise(ARRGrouped = sum(Dif)) %>%
       ungroup() 
@@ -176,9 +176,11 @@ metrics <- function(input, output, session) {
     
     NewExpand <- data.table(KPI ="New & Expand ARR", Value = NewExpand)
     
+    TM <- data.table(KPI="Total ARR [This Month]", Value=sum(neu))
+    
     #metrics <- rbindlist(list(metrics, as.list(NewExpand), as.list(Cost)), use.names=FALSE)
     
-    metrics <- rbindlist(list(as.list(NewExpand), as.list(TotalCost)), use.names=FALSE)
+    metrics <- rbindlist(list(as.list(TM), as.list(NewExpand), as.list(TotalCost)), use.names=FALSE)
     
     #calculate Combined CAC Ratio
     
@@ -191,24 +193,27 @@ metrics <- function(input, output, session) {
     
     #Format values
     
-    metrics$Value <- format(round(metrics$Value, 4), nsmall = 4)
-    
+    metrics$Value <- format(round(metrics$Value, 3), nsmall = 3)
+
     
     #Calculate Avg. ARR per Customer
     
-    saas_data_temp2 <- saas_data
+    NrCustomers <- saas_data
     
     if (!is.null(input$Month)) {
-      saas_data_temp2 <- saas_data_temp2 %>%
+      NrCustomers <- NrCustomers %>%
         dplyr::filter(Period %in% input$Month)}
      
-    saas_data_temp2 <- saas_data_temp2 %>%
+    NrCustomers <- NrCustomers %>%
                       dplyr::summarise(n_customers = n_distinct(CustomerID))
 
       
-    saas_data_temp2 <- data.table(KPI = "Number of customers", Value = saas_data_temp2)
+    NrCustomers <- data.table(KPI = "Number of customers", Value = NrCustomers)
     
-    metrics <- rbindlist(list(metrics, saas_data_temp2), use.names=FALSE)
+    AvARRpC <- TM[1, -1] / NrCustomers[1, -1]
+    AvARRpC <- data.table(KPI = "Avg. ARR per Customer", Value = AvARRpC)
+    
+    metrics <- rbindlist(list(metrics, NrCustomers, AvARRpC), use.names=FALSE)
     
     
     #Print Table
