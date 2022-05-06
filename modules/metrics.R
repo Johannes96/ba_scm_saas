@@ -196,18 +196,19 @@ metrics <- function(input, output, session) {
     
     #Calculate Avg. ARR per Customer
     
-    saas_data_temp <- saas_data
+    saas_data_temp2 <- saas_data
     
     if (!is.null(input$Month)) {
-      saas_data_temp <- saas_data_temp %>%
+      saas_data_temp2 <- saas_data_temp2 %>%
         dplyr::filter(Period %in% input$Month)}
      
-    saas_data_temp <- saas_data_temp %>%
+    saas_data_temp2 <- saas_data_temp2 %>%
                       dplyr::summarise(n_customers = n_distinct(CustomerID))
+
       
-    saas_data_temp <- data.table(KPI = "Number of customers", Value = saas_data_temp)
+    saas_data_temp2 <- data.table(KPI = "Number of customers", Value = saas_data_temp2)
     
-    metrics <- rbindlist(list(metrics, saas_data_temp), use.names=FALSE)
+    metrics <- rbindlist(list(metrics, saas_data_temp2), use.names=FALSE)
     
     
     #Print Table
