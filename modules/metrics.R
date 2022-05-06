@@ -53,7 +53,7 @@ metrics <- function(input, output, session) {
     ungroup()
   
   
-  # Prepare Bridge ----------------------------------------------------------
+  # Preparation ----------------------------------------------------------
   
   bridge <- pivot_wider(saas_data_temp, names_from = Period, values_from = TotalARR) 
   
@@ -62,7 +62,7 @@ metrics <- function(input, output, session) {
   
   #Calculate differences
   
-  UserInput <-"2020-10"
+
   dat <- reactive({
     UserInput <-
       ifelse(input$Month == "2020-10", "2020-10-01",
@@ -164,7 +164,7 @@ metrics <- function(input, output, session) {
     
     Cost <- rbindlist(list(as.list(Cost),as.list(TotalCost)), use.names=FALSE)
     
-    # Create bridge -----------------------------------------------------------
+    # Create metrics table -----------------------------------------------------------
     
     metrics <- bridge %>% 
       filter(Change == c("New", "Expansion")) %>% 
@@ -174,11 +174,21 @@ metrics <- function(input, output, session) {
     
     NewExpand <- with(metrics, sum(ARRGrouped[Change == "New" | Change == "Expansion"]))
     
-    NewExpand <- data.table(Change="New & Expand ARR", PeriodARR = NewExpand)
+    NewExpand <- data.table(KPI ="New & Expand ARR", Value = NewExpand)
     
     #metrics <- rbindlist(list(metrics, as.list(NewExpand), as.list(Cost)), use.names=FALSE)
+    
     metrics <- rbindlist(list(as.list(NewExpand), as.list(TotalCost)), use.names=FALSE)
     
+    #calculate Combined CAC Ratio
+    
+    CombinedCACRatio <- metrics[2, -1] / metrics[1, -1]
+    
+    CombinedCACRatio <- data.table(KPI = "Combined CAC Ratio", Value = CombinedCACRatio)
+    
+    metrics <- rbindlist(list(metrics, CombinedCACRatio), use.names=FALSE)
+    
+    metrics$Value <- format(round(metrics$Value, 4), nsmall = 4)
     
     metrics
     
