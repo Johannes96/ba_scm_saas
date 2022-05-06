@@ -5,6 +5,7 @@ con_saas <- dbConnect(RSQLite::SQLite(), paste0(getwd(), "/data/saas_database.db
 # define SELECT statements
 str_SQL_Adr <- "SELECT * FROM Adresses"
 str_SQL_Saas <- "SELECT * FROM SaaSData"
+str_SQL_Exp <- "SELECT * FROM expenses"
 
 # query first table and wrangle data
 saas_adr <- dbGetQuery(con_saas, str_SQL_Adr) %>%
