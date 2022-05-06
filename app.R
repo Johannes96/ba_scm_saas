@@ -11,7 +11,7 @@ ui <- fluidPage(theme = shinytheme("cosmo"),
     theme = "cosmo",
     "Dive Insight",
     
-    tabPanel("Welcome", welcome_UI("welcome"), icon = icon("globe")),
+    tabPanel("Welcome", welcome_UI("welcome"), icon = icon("font-awesome")),
     
     navbarMenu("Descriptive analytics", icon = icon("deezer"),
                 tabPanel("Geographical analysis", descriptive_analytics_UI("descriptive_analytics"), icon = icon("globe")),
