@@ -136,34 +136,34 @@ metrics <- function(input, output, session) {
                                                                                                                                     
                                                                                                                                     
                                                                                                                              ))))))))))))))))))
-    
-    # Cost <-
-    #   ifelse(UserInput == "2020-10-01", expenses %>% select("2020-10-01"),
-    #          ifelse(UserInput == "2020-11-01", expenses %>% select("2020-11-01"),
-    #                 ifelse(UserInput == "2020-12-01", expenses %>% select("2020-12-01"),
-    #                        ifelse(UserInput == "2021-01-01", expenses %>% select("2021-01-01"),
-    #                               ifelse(UserInput == "2021-02-01", expenses %>% select("2021-02-01"),
-    #                                      ifelse(UserInput == "2021-03-01", expenses %>% select("2021-03-01"),
-    #                                             ifelse(UserInput == "2021-04-01", expenses %>% select("2021-04-01"),
-    #                                                    ifelse(UserInput == "2021-05-01", expenses %>% select("2021-05-01"),
-    #                                                           ifelse(UserInput == "2021-06-01", expenses %>% select("2021-06-01"),
-    #                                                                  ifelse(UserInput == "2021-07-01", expenses %>% select("2021-07-01"),
-    #                                                                         ifelse(UserInput == "2021-08-01", expenses %>% select("2021-08-01"),
-    #                                                                                ifelse(UserInput == "2021-09-01", expenses %>% select("2021-09-01"),
-    #                                                                                       ifelse(UserInput == "2021-10-01", expenses %>% select("2021-10-01"),
-    #                                                                                              ifelse(UserInput == "2021-11-01", expenses %>% select("2021-11-01"),
-    #                                                                                                     ifelse(UserInput == "2021-12-01", expenses %>% select("2021-12-01"),
-    #                                                                                                            ifelse(UserInput == "2022-01-01", expenses %>% select("2022-01-01"),
-    #                                                                                                                   ifelse(UserInput == "2022-02-01", expenses %>% select("2022-02-01"),
-    #                                                                                                                          ifelse(UserInput == "2022-03-01", expenses %>% select("2022-03-01"), expenses %>% select("2020-10-01")
-    #                                                                                                                                 
-    #                                                                                                                                 
-    #                                                                                                                          ))))))))))))))))))
+
+    Cost <-
+      ifelse(UserInput == "2020-10-01", saas_exp %>% select("01.10.2020"),
+             ifelse(UserInput == "2020-11-01", saas_exp %>% select("01.11.2020"),
+                    ifelse(UserInput == "2020-12-01", saas_exp %>% select("01.12.2020"),
+                           ifelse(UserInput == "2021-01-01", saas_exp %>% select("01.01.2021"),
+                                  ifelse(UserInput == "2021-02-01", saas_exp %>% select("01.02.2021"),
+                                         ifelse(UserInput == "2021-03-01", saas_exp %>% select("01.03.2021"),
+                                                ifelse(UserInput == "2021-04-01", saas_exp %>% select("01.04.2021"),
+                                                       ifelse(UserInput == "2021-05-01", saas_exp %>% select("01.05.2021"),
+                                                              ifelse(UserInput == "2021-06-01", saas_exp %>% select("01.06.2021"),
+                                                                     ifelse(UserInput == "2021-07-01", saas_exp %>% select("01.07.2021"),
+                                                                            ifelse(UserInput == "2021-08-01", saas_exp %>% select("01.08.2021"),
+                                                                                   ifelse(UserInput == "2021-09-01", saas_exp %>% select("01.09.2021"),
+                                                                                          ifelse(UserInput == "2021-10-01", saas_exp %>% select("01.10.2021"),
+                                                                                                 ifelse(UserInput == "2021-11-01", saas_exp %>% select("01.11.2021"),
+                                                                                                        ifelse(UserInput == "2021-12-01", saas_exp %>% select("01.12.2021"),
+                                                                                                               ifelse(UserInput == "2022-01-01", saas_exp %>% select("01.01.2022"),
+                                                                                                                      ifelse(UserInput == "2022-02-01", saas_exp %>% select("01.02.2022"),
+                                                                                                                             ifelse(UserInput == "2022-03-01", saas_exp %>% select("01.03.2022"), saas_exp %>% select("01.10.2020")
+
+
+                                                                                                                             ))))))))))))))))))
     
     
     alt <- data.frame(alt = matrix(unlist(alt), nrow=472, byrow=TRUE),stringsAsFactors=FALSE)
     neu <- data.frame(neu = matrix(unlist(neu), nrow=472, byrow=TRUE),stringsAsFactors=FALSE)
-    #Cost <- data.frame(neu = matrix(unlist(Cost), nrow=4, byrow=TRUE),stringsAsFactors=FALSE)
+    Cost <- data.frame(neu = matrix(unlist(Cost), nrow=4, byrow=TRUE),stringsAsFactors=FALSE)
     
     
     
@@ -179,13 +179,13 @@ metrics <- function(input, output, session) {
     #Sum ARR Last Month
     LM <- data.table(Change="Last Month",PeriodARR=sum(alt))
     
+    #Cost <- data.table("CostType" = c("Personal expenses Sales", "Referral commission", "Personal expenses Marketing", "Marketing cost"),
+     #                  "Expense"=c(100000,20000,30000,70000))
+    
     Cost <- data.table("CostType" = c("Personal expenses Sales", "Referral commission", "Personal expenses Marketing", "Marketing cost"),
-                       "Expense"=c(100000,20000,30000,70000))
+                        "Expense"=Cost)
     
-    # Cost <- data.table("CostType" = c("Personal expenses Sales", "Referral commission", "Personal expenses Marketing", "Marketing cost"),
-    #                    "Expense"=Cost)
-    
-    TotalCost <- with(Cost, sum(Expense[CostType == "Personal expenses Sales" | CostType == "Referral commission" | CostType == "Personal expenses Marketing" | CostType == "Marketing cost"]))
+    TotalCost <- with(Cost, sum(Expense.neu[CostType == "Personal expenses Sales" | CostType == "Referral commission" | CostType == "Personal expenses Marketing" | CostType == "Marketing cost"]))
     TotalCost <- data.table(Change="Costs of ARR Acquisistion", TotalCost = TotalCost)
     
     Cost <- rbindlist(list(as.list(Cost),as.list(TotalCost)), use.names=FALSE)
@@ -210,7 +210,7 @@ metrics <- function(input, output, session) {
     
     #calculate Combined CAC Ratio
     
-    CombinedCACRatio <- metrics[2, -1] / metrics[1, -1]
+    CombinedCACRatio <- metrics[3, -1] / metrics[2, -1]
     
     CombinedCACRatio <- data.table(KPI = "Combined CAC Ratio", Value = CombinedCACRatio)
     
