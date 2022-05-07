@@ -219,21 +219,12 @@ metrics <- function(input, output, session) {
     
     #Format values
     
-    metrics$Value <- format(round(metrics$Value, 3), nsmall = 3)
+    #metrics$Value <- format(round(metrics$Value, 3), nsmall = 3)
 
     
     #Calculate Avg. ARR per Customer
     
-    NrCustomers <- saas_data
-    
-    if (!is.null(input$Month)) {
-      NrCustomers <- NrCustomers %>%
-        dplyr::filter(Period %in% input$Month)}
-     
-    NrCustomers <- NrCustomers %>%
-                      dplyr::summarise(n_customers = n_distinct(CustomerID))
-
-      
+    NrCustomers <- apply(neu,2,function(neu) sum(neu > 0))
     NrCustomers <- data.table(KPI = "Number of customers", Value = NrCustomers)
     
     AvARRpC <- TM[1, -1] / NrCustomers[1, -1]
@@ -241,6 +232,10 @@ metrics <- function(input, output, session) {
     
     metrics <- rbindlist(list(metrics, NrCustomers, AvARRpC), use.names=FALSE)
     
+    #Format values
+    
+    metrics$Value <- format(round(metrics$Value, 3), nsmall = 3)
+    metrics[5,2] <- as.integer(metrics[5,2])
     
     #Print Table
     
