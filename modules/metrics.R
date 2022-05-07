@@ -254,9 +254,8 @@ metrics <- function(input, output, session) {
 
   
   output$Metrics = DT::renderDataTable({
-    tmp <- datatable(dat(), options = list(paging = FALSE, searching = FALSE)) %>%
-      #formatStyle('KPI',  color = 'red', backgroundColor = 'orange', fontWeight = 'bold')
-      formatStyle(1, target="row", fontWeight = styleEqual(c("Avg. ARR per Customer", "Combined CAC Ratio", "Costs of ARR Acquisistion"),"bold"), backgroundColor = styleEqual(c("Avg. ARR per Customer", "Combined CAC Ratio", "Costs of ARR Acquisistion"),"palegreen"))
+    tmp <- datatable(dat(), rownames = FALSE, options = list(paging = FALSE, searching = FALSE)) %>%
+      formatStyle(1, target="row", fontWeight = styleEqual(c("Avg. ARR per Customer", "Combined CAC Ratio"),"bold"), backgroundColor = styleEqual(c("Avg. ARR per Customer", "Combined CAC Ratio"),"palegreen")) 
     return(tmp)
 
   })
