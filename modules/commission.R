@@ -1,12 +1,13 @@
 
 # UI ----------------------------------------------------------------------
 
-metrics_UI <- function(id) {
+commission_UI <- function(id) {
   ns <- NS(id)
   tagList(
     sidebarLayout(
       sidebarPanel(
         titlePanel("Filter"),
+        downloadButton(ns('downloadData'),"Download Table"),
         fluidRow(column(12,
                         # Select Month
                         selectInput(inputId = ns("Month"),
@@ -17,8 +18,8 @@ metrics_UI <- function(id) {
         )               
         , width=3),
       mainPanel(
-        titlePanel("Metrics"),
-        DT::dataTableOutput(ns("Metrics"))
+        titlePanel("Commission calculation"),
+        DT::dataTableOutput(ns("commission"))
       )
     )
   )
@@ -26,7 +27,7 @@ metrics_UI <- function(id) {
 
 ## Server ------------------------------------------------------------------
 
-metrics <- function(input, output, session) {
+commission <- function(input, output, session) {
   
   selected <- reactiveValues()
   filter <- reactiveValues(Month = unique(saas_data$Period))
@@ -46,9 +47,9 @@ metrics <- function(input, output, session) {
   
   # Prepare dataframe -------------------------------------------------------
   
-  saas_data_temp <- saas_data %>% select(CustomerID, Period, CustomerIndustry, SalesChannel, SalesTyp, ARR)
+  saas_data_temp <- saas_data %>% select(CustomerID, SalesRep, Period, ARR)
   saas_data_temp <- saas_data_temp %>% 
-    group_by(CustomerID, CustomerIndustry, SalesChannel, SalesTyp, Period) %>%
+    group_by(CustomerID, SalesRep, Period) %>%
     summarise(TotalARR = sum(ARR)) %>%
     ungroup()
   
@@ -62,7 +63,6 @@ metrics <- function(input, output, session) {
   
   #Calculate differences
   
-
   dat <- reactive({
     UserInput <-
       ifelse(input$Month == "2020-10-01", "2020-10-01",
@@ -136,36 +136,12 @@ metrics <- function(input, output, session) {
                                                                                                                                     
                                                                                                                                     
                                                                                                                              ))))))))))))))))))
+    
+    
+    
+    alt <- data.frame(alt = matrix(unlist(alt), nrow=522, byrow=TRUE),stringsAsFactors=FALSE)
+    neu <- data.frame(neu = matrix(unlist(neu), nrow=522, byrow=TRUE),stringsAsFactors=FALSE)
 
-    Cost <-
-      ifelse(UserInput == "2020-10-01", saas_exp %>% select("01.10.2020"),
-             ifelse(UserInput == "2020-11-01", saas_exp %>% select("01.11.2020"),
-                    ifelse(UserInput == "2020-12-01", saas_exp %>% select("01.12.2020"),
-                           ifelse(UserInput == "2021-01-01", saas_exp %>% select("01.01.2021"),
-                                  ifelse(UserInput == "2021-02-01", saas_exp %>% select("01.02.2021"),
-                                         ifelse(UserInput == "2021-03-01", saas_exp %>% select("01.03.2021"),
-                                                ifelse(UserInput == "2021-04-01", saas_exp %>% select("01.04.2021"),
-                                                       ifelse(UserInput == "2021-05-01", saas_exp %>% select("01.05.2021"),
-                                                              ifelse(UserInput == "2021-06-01", saas_exp %>% select("01.06.2021"),
-                                                                     ifelse(UserInput == "2021-07-01", saas_exp %>% select("01.07.2021"),
-                                                                            ifelse(UserInput == "2021-08-01", saas_exp %>% select("01.08.2021"),
-                                                                                   ifelse(UserInput == "2021-09-01", saas_exp %>% select("01.09.2021"),
-                                                                                          ifelse(UserInput == "2021-10-01", saas_exp %>% select("01.10.2021"),
-                                                                                                 ifelse(UserInput == "2021-11-01", saas_exp %>% select("01.11.2021"),
-                                                                                                        ifelse(UserInput == "2021-12-01", saas_exp %>% select("01.12.2021"),
-                                                                                                               ifelse(UserInput == "2022-01-01", saas_exp %>% select("01.01.2022"),
-                                                                                                                      ifelse(UserInput == "2022-02-01", saas_exp %>% select("01.02.2022"),
-                                                                                                                             ifelse(UserInput == "2022-03-01", saas_exp %>% select("01.03.2022"), saas_exp %>% select("01.10.2020")
-
-
-                                                                                                                             ))))))))))))))))))
-    
-    
-    alt <- data.frame(alt = matrix(unlist(alt), nrow=472, byrow=TRUE),stringsAsFactors=FALSE)
-    neu <- data.frame(neu = matrix(unlist(neu), nrow=472, byrow=TRUE),stringsAsFactors=FALSE)
-    Cost <- data.frame(neu = matrix(unlist(Cost), nrow=4, byrow=TRUE),stringsAsFactors=FALSE)
-    
-    
     
     bridge$"Dif" <- (neu - alt)
     
@@ -176,76 +152,54 @@ metrics <- function(input, output, session) {
                               ifelse((alt < neu & alt != 0), "Expansion",
                                      ifelse((alt ==  0 & bridge$"Dif" != 0 & neu != 0), "New",
                                             ifelse((neu ==  0 & bridge$"Dif" != 0 & alt != 0), "Churn", "No change"))))
-    #Sum ARR Last Month
-    LM <- data.table(Change="Last Month",PeriodARR=sum(alt))
-    
-    # Cost Sales and Marketing
-    Cost <- data.table("CostType" = c("Personal expenses Sales", "Referral commission", "Personal expenses Marketing", "Marketing cost"),
-                        "Expense"=Cost)
-    
-    TotalCost <- with(Cost, sum(Expense.neu[CostType == "Personal expenses Sales" | CostType == "Referral commission" | CostType == "Personal expenses Marketing" | CostType == "Marketing cost"]))
-    TotalCost <- data.table(Change="Costs of ARR Acquisistion", TotalCost = TotalCost)
-    
-    Cost <- rbindlist(list(as.list(Cost),as.list(TotalCost)), use.names=FALSE)
-    
-    # Create metrics table -----------------------------------------------------------
-    
-    metrics <- bridge %>% 
-      filter(Change !="No change") %>% 
-      group_by(Change) %>%
-      summarise(ARRGrouped = sum(Dif)) %>%
-      ungroup() 
-    
-    NewExpand <- with(metrics, sum(ARRGrouped[Change == "New" | Change == "Expansion"]))
-    
-    NewExpand <- data.table(KPI ="New & Expand ARR", Value = NewExpand)
-    
-    TM <- data.table(KPI="Total ARR [This Month]", Value=sum(neu))
-    
-    
-    metrics <- rbindlist(list(as.list(TM), as.list(NewExpand), as.list(TotalCost)), use.names=FALSE)
-    
-    
-    #Calculate Combined CAC Ratio
-    
-    CombinedCACRatio <- metrics[3, -1] / metrics[2, -1]
-    
-    CombinedCACRatio <- data.table(KPI = "Combined CAC Ratio", Value = CombinedCACRatio)
-    
-    metrics <- rbindlist(list(metrics, CombinedCACRatio), use.names=FALSE)
 
     
-    #Calculate Avg. ARR per Customer
+    # Create commission calculation table -----------------------------------------------------------
     
-    NrCustomers <- apply(neu,2,function(neu) sum(neu > 0))
-    NrCustomers <- data.table(KPI = "Number of customers", Value = NrCustomers)
+    commission <- bridge %>% 
+      filter(Change ==c("New", "Expansion")) %>% 
+      select("SalesRep", "CustomerID", "Commission base"="Dif", "Change")
     
-    AvARRpC <- TM[1, -1] / NrCustomers[1, -1]
-    AvARRpC <- data.table(KPI = "Avg. ARR per Customer", Value = AvARRpC)
     
-    metrics <- rbindlist(list(metrics, NrCustomers, AvARRpC), use.names=FALSE)
+   # CommissionRate <- data.table("Type" = c("New", "Expansion", "Else"), "Rate" = c(0.06, 0.12, 0.00))
     
-    #Format values
+    commission$"Commission Rate" <- ifelse(commission %>% select("Change") == "Expansion", 0.06,
+                                           ifelse(commission %>% select("Change") == "New", 0.12, 0))
     
-    metrics$Value <- format(round(metrics$Value, 3), nsmall = 3)
-    metrics[5,2] <- as.integer(metrics[5,2])
+    commission$"Commission" <- (commission[, 3] * commission[, 5])
+    
+    commission <- commission %>% 
+      arrange_(.dots="SalesRep")
     
     #Print Table
     
-    metrics
+    commission
     
   })
   
   
   # Create plot -------------------------------------------------------------
   
-
   
-  output$Metrics = DT::renderDataTable({
+  
+  output$commission = DT::renderDataTable({
     tmp <- datatable(dat(), rownames = FALSE, options = list(paging = FALSE, searching = FALSE)) %>%
-      formatStyle(1, target="row", fontWeight = styleEqual(c("Avg. ARR per Customer", "Combined CAC Ratio"),"bold"), backgroundColor = styleEqual(c("Avg. ARR per Customer", "Combined CAC Ratio"),"palegreen")) 
-    return(tmp)
-
+      formatCurrency(c("Commission base","Commission"), '\U20AC', before = FALSE, interval = 3, mark = ".", dec.mark = ",", digits = 2,) %>%
+      formatPercentage("Commission Rate", digits = 0, interval = 3, mark = ",")
+    
+        return(tmp)
+    
   })
-  
+
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste(input$Month, "_commission_calculation.csv", sep = "")
+    },
+    content = function(file) {
+      write.csv(dat(), file, row.names = FALSE)
+    }
+  )
+
 }
+
+

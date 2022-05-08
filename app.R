@@ -4,9 +4,7 @@ ui <- fluidPage(theme = shinytheme("cosmo"),
                 
                 # add css file to customize appearance
                 tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")),
-                # setBackgroundImage(
-                #   src = "https://wallpaperbat.com/img/312147-aesthetic-white-geometric-wallpaper-top-free-aesthetic-white.png"
-                # ),            
+           
     navbarPage(
     theme = "cosmo",
     "Dive Insight",
@@ -18,6 +16,7 @@ ui <- fluidPage(theme = shinytheme("cosmo"),
                 tabPanel("All time analysis", alltime_UI("alltime"), icon = icon("chart-bar")),
                 tabPanel("Employee performance", customer_analytics_UI("customer_analytics"), icon = icon("users")),
                 tabPanel("ARR-Bridge", bridge_UI("bridge"), icon = icon("bold")),
+                tabPanel("Commission calculation", commission_UI("commission"), icon = icon("euro-sign")),
                 tabPanel("Metrics", metrics_UI("metrics"), icon = icon("calculator"))),
     
     tabPanel("Forecast", predictive_analytics_UI("predictive_analytics"), icon = icon("chart-line")),
@@ -42,6 +41,7 @@ server <- function(input, output) {
     callModule(predictive_analytics, "predictive_analytics")
     callModule(customer_analytics_server, "customer_analytics")
     callModule(bridge, "bridge")
+    callModule(commission, "commission")
     callModule(metrics, "metrics")
     callModule(about, "about")
 }
