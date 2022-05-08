@@ -18,7 +18,6 @@ saas_adr <- dbGetQuery(con_saas, str_SQL_Adr) %>%
 saas_data <- dbGetQuery(con_saas, str_SQL_Saas) %>%
   tbl_df() %>%
   mutate(Period = dmy(Period)) %>% #convert to dateformat
-  mutate(ContractStart = dmy(ContractStart)) %>% 
   mutate(PositionPrice = as.numeric(gsub(pattern = ",", replacement = ".", PositionPrice))) %>%
   mutate(PositionSum = as.numeric(gsub(pattern = ",", replacement = ".", PositionSum))) %>%
   mutate(ARR = as.numeric(gsub(pattern = ",", replacement = ".", ARR))) %>%

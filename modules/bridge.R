@@ -165,6 +165,8 @@ bridgetable <- bridge %>%
 
 bridgetable <- rbindlist(list(as.list(LM), bridgetable), use.names=FALSE)
 
+
+#Print Table
 bridgetable
 
   })
@@ -177,14 +179,14 @@ output$ARRBridge <- renderPlot({
   
   tmp <- dat()
   
-  waterfall(tmp, calc_total = TRUE, total_axis_text="Actual", draw_lines = FALSE, fill_by_sign = FALSE, fill_colours = 3:8, rect_border = NA, rect_text_size = 2, put_rect_text_outside_when_value_below = 300000)
-   
+  waterfall(tmp, calc_total = TRUE, total_axis_text="Actual", draw_lines = FALSE, fill_by_sign = FALSE, fill_colours = 3:8, rect_border = NA, rect_text_size = 2, put_rect_text_outside_when_value_below = 300000) 
 })
 
 output$BridgeTable = DT::renderDataTable({
-  tmp <- dat()
-  tmp} ,options = list(paging = FALSE, 
-                      searching = FALSE
-                      ))
+  tmp <- datatable(dat(), rownames = FALSE, options = list(paging = FALSE, searching = FALSE)) %>%
+    formatCurrency("PeriodARR", '\U20AC', before = FALSE, interval = 3, mark = ".", dec.mark = ",", digits = 2,)
+  return(tmp)
+  
+})
 
 }
