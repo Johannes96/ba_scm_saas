@@ -148,10 +148,10 @@ bridge$"Dif" <- (neu - alt)
 
 #Create categories
 
-bridge$"Change" <- ifelse((alt > neu & neu != 0), "Contraction",
-                          ifelse((alt < neu & alt != 0), "Expansion",
-                                 ifelse((alt ==  0 & bridge$"Dif" != 0 & neu != 0), "New",
-                                        ifelse((neu ==  0 & bridge$"Dif" != 0 & alt != 0), "Churn", "No change"))))
+bridge$"Change" <- ifelse((alt ==  0 & bridge$"Dif" != 0 & neu != 0), "New",
+                      ifelse((neu ==  0 & bridge$"Dif" != 0 & alt != 0), "Churn",
+                          ifelse((alt > neu & neu != 0), "Contraction",
+                               ifelse((alt < neu & alt != 0), "Expansion", "No change"))))
 #Sum ARR Last Month
 LM <- data.table(Change="Last Month",PeriodARR=sum(alt))
 
@@ -179,7 +179,7 @@ output$ARRBridge <- renderPlot({
   
   tmp <- dat()
   
-  waterfall(tmp, calc_total = TRUE, total_axis_text="Actual", draw_lines = FALSE, fill_by_sign = FALSE, fill_colours = 3:8, rect_border = NA, rect_text_size = 2, put_rect_text_outside_when_value_below = 300000) 
+  waterfall(tmp, calc_total = TRUE, total_axis_text="Actual", draw_lines = FALSE, rect_border = NA, rect_text_size = 2, put_rect_text_outside_when_value_below = 300000) 
 })
 
 output$BridgeTable = DT::renderDataTable({

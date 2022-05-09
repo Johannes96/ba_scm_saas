@@ -376,14 +376,6 @@ commission2 <- function(input, output, session) {
     return(tmp)
     
   })
-  
-  output$downloadData2 <- downloadHandler2(
-    filename = function() {
-      paste(input$Month, "_commission_calculation.csv", sep = "")
-    },
-    content = function(file) {
-      write.csv(dat2(), file, row.names = FALSE)
-    }
-  )
+
   
 }
