@@ -42,6 +42,7 @@ server <- function(input, output) {
     callModule(customer_analytics_server, "customer_analytics")
     callModule(bridge, "bridge")
     callModule(commission, "commission")
+    callModule(commission, "commission2")
     callModule(metrics, "metrics")
     callModule(about, "about")
 }
