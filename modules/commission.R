@@ -18,10 +18,11 @@ commission_UI <- function(id) {
         )               
         , width=3),
       mainPanel(
+        titlePanel("Commission calculation"),
         tabsetPanel(
-          tabPanel(title = "Commission calculation for Controlling",
+          tabPanel(title = "For Controlling",
                   DT::dataTableOutput(ns("commission"))),
-          tabPanel(title = "Commission calculation for Accounting",
+          tabPanel(title = "For Accounting",
                    DT::dataTableOutput(ns("commission2"))))
           
       )
