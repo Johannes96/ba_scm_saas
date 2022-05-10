@@ -1,13 +1,13 @@
 
 # UI ----------------------------------------------------------------------
 
-commission_UI <- function(id) {
+commission2_UI <- function(id) {
   ns <- NS(id)
   tagList(
     sidebarLayout(
       sidebarPanel(
         titlePanel("Filter"),
-        downloadButton(ns('downloadData'),"Download Table"),
+        downloadButton(ns('downloadData2'),"Download Table"),
         fluidRow(column(12,
                         # Select Month
                         selectInput(inputId = ns("Month"),
@@ -18,16 +18,16 @@ commission_UI <- function(id) {
         )               
         , width=3),
       mainPanel(
-        DT::dataTableOutput(ns("commission"))
+          DT::dataTableOutput(ns("commission2"))
           
+        )
       )
     )
-  )
 }
 
 ## Server ------------------------------------------------------------------
 
-commission <- function(input, output, session) {
+commission2 <- function(input, output, session) {
   
   selected <- reactiveValues()
   filter <- reactiveValues(Month = unique(saas_data$Period))
@@ -141,7 +141,7 @@ commission <- function(input, output, session) {
     
     alt <- data.frame(alt = matrix(unlist(alt), nrow=522, byrow=TRUE),stringsAsFactors=FALSE)
     neu <- data.frame(neu = matrix(unlist(neu), nrow=522, byrow=TRUE),stringsAsFactors=FALSE)
-
+    
     
     bridge$"Dif" <- (neu - alt)
     
@@ -152,7 +152,7 @@ commission <- function(input, output, session) {
                               ifelse((alt < neu & alt != 0), "Expansion",
                                      ifelse((alt ==  0 & bridge$"Dif" != 0 & neu != 0), "New",
                                             ifelse((neu ==  0 & bridge$"Dif" != 0 & alt != 0), "Churn", "No change"))))
-
+    
     
     # Create commission calculation table -----------------------------------------------------------
     
@@ -161,7 +161,7 @@ commission <- function(input, output, session) {
       select("SalesRep", "CustomerID", "Commission base"="Dif", "Change")
     
     
-   # CommissionRate <- data.table("Type" = c("New", "Expansion", "Else"), "Rate" = c(0.06, 0.12, 0.00))
+    # CommissionRate <- data.table("Type" = c("New", "Expansion", "Else"), "Rate" = c(0.06, 0.12, 0.00))
     
     commission$"Commission Rate" <- ifelse(commission %>% select("Change") == "Expansion", 0.06,
                                            ifelse(commission %>% select("Change") == "New", 0.12, 0))
@@ -169,7 +169,9 @@ commission <- function(input, output, session) {
     commission$"Commission" <- (commission[, 3] * commission[, 5])
     
     commission <- commission %>% 
-      arrange_(.dots="SalesRep")
+      group_by(SalesRep) %>%
+      summarise("Total Commission" = sum(Commission)) %>%
+      ungroup()
     
     #Print Table
     
@@ -182,16 +184,15 @@ commission <- function(input, output, session) {
   
   
   
-  output$commission = DT::renderDataTable({
+  output$commission2 = DT::renderDataTable({
     tmp <- datatable(dat(), rownames = FALSE, options = list(paging = FALSE, searching = FALSE)) %>%
-      formatCurrency(c("Commission base","Commission"), '\U20AC', before = FALSE, interval = 3, mark = ".", dec.mark = ",", digits = 2,) %>%
-      formatPercentage("Commission Rate", digits = 0, interval = 3, mark = ",")
+      formatCurrency("Total Commission", '\U20AC', before = FALSE, interval = 3, mark = ".", dec.mark = ",", digits = 2,)
     
-        return(tmp)
+    return(tmp)
     
   })
-
-  output$downloadData <- downloadHandler(
+  
+  output$downloadData2 <- downloadHandler(
     filename = function() {
       paste(input$Month, "_commission_calculation.csv", sep = "")
     },
@@ -199,7 +200,6 @@ commission <- function(input, output, session) {
       write.csv(dat(), file, row.names = FALSE)
     }
   )
-
+  
 }
-
 

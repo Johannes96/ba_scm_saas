@@ -16,7 +16,11 @@ ui <- fluidPage(theme = shinytheme("cosmo"),
                 tabPanel("All time analysis", alltime_UI("alltime"), icon = icon("chart-bar")),
                 tabPanel("Employee performance", customer_analytics_UI("customer_analytics"), icon = icon("users")),
                 tabPanel("ARR-Bridge", bridge_UI("bridge"), icon = icon("bold")),
-                tabPanel("Commission calculation", commission_UI("commission"), icon = icon("euro-sign")),
+                tabPanel("Commission calculation", icon = icon("euro-sign"),
+                         titlePanel("Commission calculation"),
+                         tabsetPanel(
+                           tabPanel(title = "For Controlling", commission_UI("commission")),
+                           tabPanel(title = "For Accounting", commission2_UI("commission2")))),
                 tabPanel("Metrics", metrics_UI("metrics"), icon = icon("calculator"))),
     
     tabPanel("Forecast", predictive_analytics_UI("predictive_analytics"), icon = icon("chart-line")),
@@ -42,7 +46,7 @@ server <- function(input, output) {
     callModule(customer_analytics_server, "customer_analytics")
     callModule(bridge, "bridge")
     callModule(commission, "commission")
-    callModule(commission, "commission2")
+    callModule(commission2, "commission2")
     callModule(metrics, "metrics")
     callModule(about, "about")
 }
