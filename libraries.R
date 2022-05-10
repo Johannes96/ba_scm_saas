@@ -40,3 +40,5 @@ library(dplyr)
 library(fontawesome)
 library(ggalluvial)
 library(gt)
+library(shinyBS) # adds tooltips and popovers
+library(shinyjs)

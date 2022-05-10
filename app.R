@@ -49,6 +49,7 @@ server <- function(input, output) {
     callModule(commission2, "commission2")
     callModule(metrics, "metrics")
     callModule(about, "about")
+    callModule(clustering_server, "clustering")
 }
 
 shinyApp(ui = ui, server = server)

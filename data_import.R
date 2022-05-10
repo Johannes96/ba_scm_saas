@@ -62,3 +62,15 @@ world_spdf@data <- world_spdf@data %>%
                             NAME == "United States" ~ "USA",
                             TRUE ~ NAME))
 
+# Data for clustering -----------------------------------------------------
+
+data_clustering <- saas_data %>%
+  group_by(CustomerID, CustomerName, CustomerIndustry, SalesChannel, SalesTyp, latitude, longitude) %>%
+  summarise(PositionQuantity = sum(PositionQuantity),
+            PositionSum = sum(PositionSum),
+            ARR = sum(ARR)) %>%
+  ungroup()
+  
+
+  
+  
