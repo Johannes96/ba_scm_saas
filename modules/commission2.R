@@ -197,7 +197,7 @@ commission2 <- function(input, output, session) {
       paste(input$Month, "_commission_calculation.csv", sep = "")
     },
     content = function(file) {
-      write.csv(dat(), file, row.names = FALSE)
+      write.table(dat(), row.names = FALSE, dec = ",", sep = ";",  quote = FALSE, file)
     }
   )
   
