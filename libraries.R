@@ -28,6 +28,7 @@ library(rpivotTable)
 library(RColorBrewer)
 library(waterfalls)
 
+
 # Machine Learning --------------------------------------------------------
 library(forecast)
 
@@ -42,3 +43,4 @@ library(ggalluvial)
 library(gt)
 library(shinyBS) # adds tooltips and popovers
 library(shinyjs)
+library(shinycssloaders)
