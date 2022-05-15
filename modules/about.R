@@ -12,7 +12,7 @@ about_UI <- function(id) {
               p(strong("All time Analysis"), "shows the movement of your inventory over the whole period of time when data is available."),
               p("Under", strong("Employee performance"), "you can monitor the ARR-contribution of your employees."),
               p(strong("ARR-Bridge"), "illustrates the new, expanded, contracted and churned customers measured in ARR."),
-              p(strong("Commission calculation"), "...."),
+              p(strong("Commission calculation"), "displays two tables in two tabs, one for controlling and one for accounting. In both tables the commission amount that the employees earned is calculated, based on the new and expanded business for a month. Controlling employees can see more details for the calculation so they can check if everything is correct, and for the accounting employees the tables shows the amounts grouped by sales representatives which they can include in the payroll."),
               p(strong("Metrics"), "contains further metrics, like Combined Customer Acquisition Ratio or Avarage ARR per Customer."),
               p("With the help of", strong("Forecast"), "you are able to predict your expected future ARR and react prior if need be."),
               ),
