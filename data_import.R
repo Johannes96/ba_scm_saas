@@ -6,6 +6,7 @@ con_saas <- dbConnect(RSQLite::SQLite(), paste0(getwd(), "/data/saas_database.db
 str_SQL_Adr <- "SELECT * FROM Adresses"
 str_SQL_Saas <- "SELECT * FROM SaaSData"
 str_SQL_Exp <- "SELECT * FROM expenses"
+str_SQL_Opp <- "SELECT * FROM Opportunities"
 
 # Query first table and wrangle data
 saas_adr <- dbGetQuery(con_saas, str_SQL_Adr) %>%
@@ -32,7 +33,12 @@ saas_data <- dbGetQuery(con_saas, str_SQL_Saas) %>%
 # Get third table expenses
 saas_exp <- dbGetQuery(con_saas, str_SQL_Exp)
 
-saas_exp <- saas_exp
+
+# Get fourth table opportunities
+saas_opp <- dbGetQuery(con_saas, str_SQL_Opp) %>%
+  tbl_df() %>%
+  mutate(ARR = as.numeric(gsub(pattern = ",", replacement = ".", ARR))) %>%
+  mutate(Value = as.numeric(gsub(pattern = ",", replacement = ".", Value)))
 
 
 #Disconnet DB
