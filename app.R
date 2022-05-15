@@ -24,8 +24,9 @@ ui <- fluidPage(theme = shinytheme("cosmo"),
                 tabPanel("Metrics", metrics_UI("metrics"), icon = icon("calculator"))),
     
     navbarMenu("Predictive analytics", icon = icon("chart-line"),
-                tabPanel("Modell-based Forecast", predictive_analytics_UI("predictive_analytics"), icon = icon("signal")),
-                tabPanel("Other")),
+              tabPanel("Modell-based Forecast", predictive_analytics_UI("predictive_analytics"), icon = icon("signal")),
+              tabPanel("Sales-Forecast", salesforecast_UI("salesforecast"), icon = icon("messages-dollar")),
+              tabPanel("Other")),
     
     navbarMenu("Machine Learning", icon = icon("robot"),
                tabPanel("Clustering", icon = icon("hubspot"), clustering_UI("clustering")),
@@ -45,6 +46,7 @@ server <- function(input, output) {
     callModule(descriptive_analytics, "descriptive_analytics")
     callModule(alltime_server, "alltime")
     callModule(predictive_analytics, "predictive_analytics")
+    callModule(salesforecast, "salesforecast")
     callModule(customer_analytics_server, "customer_analytics")
     callModule(bridge, "bridge")
     callModule(commission, "commission")
