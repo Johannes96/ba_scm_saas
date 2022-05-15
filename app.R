@@ -25,7 +25,7 @@ ui <- fluidPage(theme = shinytheme("cosmo"),
     
     navbarMenu("Predictive analytics", icon = icon("chart-line"),
               tabPanel("Modell-based Forecast", predictive_analytics_UI("predictive_analytics"), icon = icon("signal")),
-              tabPanel("Sales-Forecast", salesforecast_UI("salesforecast"), icon = icon("messages-dollar")),
+              tabPanel("Sales-Forecast", salesforecast_UI("salesforecast"), icon = icon("comment-dollar")),
               tabPanel("Other")),
     
     navbarMenu("Machine Learning", icon = icon("robot"),

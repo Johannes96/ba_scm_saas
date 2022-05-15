@@ -9,10 +9,12 @@ salesforecast_UI <- function(id) {
   )
 }
 
+## Server ------------------------------------------------------------------
+
+salesforecast <- function(input, output, session) {
 
 
 
 
 
-
-
+}
