@@ -23,7 +23,9 @@ ui <- fluidPage(theme = shinytheme("cosmo"),
                            tabPanel(title = "For Accounting", commission2_UI("commission2")))),
                 tabPanel("Metrics", metrics_UI("metrics"), icon = icon("calculator"))),
     
-    tabPanel("Forecast", predictive_analytics_UI("predictive_analytics"), icon = icon("chart-line")),
+    navbarMenu("Predictive analytics", icon = icon("chart-line"),
+                tabPanel("Modell-based Forecast", predictive_analytics_UI("predictive_analytics"), icon = icon("signal")),
+                tabPanel("Other")),
     
     navbarMenu("Machine Learning", icon = icon("robot"),
                tabPanel("Clustering", icon = icon("hubspot"), clustering_UI("clustering")),
