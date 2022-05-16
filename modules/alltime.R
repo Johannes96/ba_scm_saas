@@ -22,4 +22,4 @@ alltime_server <- function(input, output, session) {
                 rendererName = "Stacked Bar Chart")
   })
   
-}
+}#alltime server
