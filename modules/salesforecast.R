@@ -6,10 +6,9 @@ salesforecast_UI <- function(id) {
     sidebarLayout(
       sidebarPanel(
         fluidRow(column(12,
-                        
+                        verbatimTextOutput(ns("txtout"))                
         ) 
-        )               
-        , width=3),
+        )),
       mainPanel(
         titlePanel("Quarterly Sales Forecast"),
         DT::dataTableOutput(ns("salesforecast"))
@@ -40,11 +39,14 @@ salesforecast <- function(input, output, session) {
   
   opportunities$"Weighted Total" <- (opportunities[, 2] * opportunities[, 3])
   
-  # WeightedTotal <- as.double(colSums(opportunities[ , 4], na.rm=TRUE))
-  # 
-  # Total <- data.table("SalesStage" = "Total", "TotalARR" = "", "Probability" = "", "Weighted Total" = WeightedTotal)
-  # 
-  # opportunities <- rbindlist(list(opportunities, as.list(Total)), use.names=FALSE)
+  
+  WeightedTotal <- as.double(sum(opportunities[which(opportunities$Probability >= 0.75), 4]))
+  
+  ## WeightedTotal <- as.double(colSums(opportunities[ , 4], na.rm=TRUE))
+  
+  #Total <- data.table("SalesStage" = "Total", "TotalARR" = "", "Probability" = "", WeightedTotal = WeightedTotal)
+  
+ # opportunities <- rbindlist(list(opportunities, Total), use.names=FALSE)
   
   opportunities <- opportunities %>% 
     arrange_(.dots="Probability")
@@ -54,7 +56,7 @@ salesforecast <- function(input, output, session) {
   
   
   output$salesforecast = DT::renderDataTable({
-    tmpF <- datatable(opportunities, rownames = FALSE, options = list(paging = FALSE, searching = FALSE)) %>%
+    tmpF <- datatable(opportunities, rownames = FALSE, options = list(paging = FALSE, searching = FALSE, info = FALSE)) %>%
       formatCurrency(c( "TotalARR","Weighted Total"), '\U20AC', before = FALSE, interval = 3, mark = ".", dec.mark = ",", digits = 2,) %>%
       formatPercentage("Probability", digits = 0, interval = 3, mark = ",")
     
@@ -62,7 +64,9 @@ salesforecast <- function(input, output, session) {
     
   })
   
-  
+  output$txtout <- renderText({
+    paste("Weighted [> 75%] Forecast:" , WeightedTotal, "EURO", sep = " ")
+  })
   
   
 }
