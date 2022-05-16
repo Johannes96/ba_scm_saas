@@ -36,24 +36,23 @@ clustering_UI <- function(id) {
         
       )
     )
-  
-  
-  
-  
+
 }
 
 clustering_server <- function(input, output, session) {
   
+  # set initial state of tabs and buttons
   hideTab(session = session, inputId = "tabs", target = "PCA")
   hideTab(session = session, inputId = "tabs", target = "Number of Clusters")
   hideTab(session = session, inputId = "tabs", target = "Interpretation")
+  shinyjs::disable("btn_n_cluster")
+  shinyjs::disable("btn_interpret")
+  
   
   observeEvent(input$btn_debug, {
     browser()
     
   })
-  
-
   
   
   observeEvent(input$btn_pca, {
@@ -69,7 +68,9 @@ clustering_server <- function(input, output, session) {
     df_pca_temp <- data.frame(pca = c("PC1", "PC2", "PC3", "PC4", "PC5"),
                               cum_variance = pca_cum_variance)
     
-    
+    clustering_results <- clustering_results %>%
+      mutate(PC1 = data_clustering.pca$x[,1],
+             PC2 = data_clustering.pca$x[,2])
       
     output$pca_cum_variance <- renderPlot({
       p_cum_var <- ggplot(df_pca_temp, aes(x=pca, y=cum_variance, group=1, label = scales::percent(cum_variance))) +
@@ -79,7 +80,8 @@ clustering_server <- function(input, output, session) {
         labs(x="Principal Components",y="Cumulative explained Variance") + 
         ggtitle("Cumulative Explained Variance per Principal Component") +
         theme(aspect.ratio=1/1)
-      p_cum_var
+      
+      shinyjs::enable("btn_n_cluster")
     })
     
     output$pca_biplot <- renderPlot({
@@ -101,9 +103,22 @@ clustering_server <- function(input, output, session) {
   
   
   observeEvent(input$btn_n_cluster, {
-    #TODO: display elbow-graph, show shilouetten coeff...
     
+    calc_kmeans <- function(x) {
+      km_temp <- kmeans(clustering_results[,11:12], centers = x, nstart = 10)
+      
+      # append new column to existing data frame
+      #n_cluster <- rep(x, nrow(clustering_results))
+      clustering_results[ , ncol(clustering_results) + 1] <- km_temp$cluster
+      colnames(clustering_results)[ncol(clustering_results)] <- paste0("n_cluster_", x)
+      browser()
+      #clustering_results <- cbind(clustering_results, km_temp$cluster)
+      return(km_temp)
+    }
     
+    kmeans_results <- sapply(1:10, calc_kmeans)
+    
+    shinyjs::enable("btn_interpret")
     
   })
   
