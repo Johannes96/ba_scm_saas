@@ -11,7 +11,8 @@ salesforecast_UI <- function(id) {
         )),
       mainPanel(
         titlePanel("Quarterly Sales Forecast"),
-        DT::dataTableOutput(ns("salesforecast"))
+        DT::dataTableOutput(ns("salesforecast")),
+        plotlyOutput(ns("salesfunnel"))
         
       )
     )
@@ -37,22 +38,17 @@ salesforecast <- function(input, output, session) {
                                                              ifelse(opportunities %>% select("SalesStage") == "Order Received", 1.0,
                                                                     ifelse(opportunities %>% select("SalesStage") == "Closed Won", 1.0, 0))))))
   
-  opportunities$"Weighted Total" <- (opportunities[, 2] * opportunities[, 3])
-  
+  opportunities$"Weighted Total" <- as.numeric(unlist((opportunities[, 2] * opportunities[, 3])))
   
   WeightedTotal <- as.double(sum(opportunities[which(opportunities$Probability >= 0.75), 4]))
   
-  ## WeightedTotal <- as.double(colSums(opportunities[ , 4], na.rm=TRUE))
-  
-  #Total <- data.table("SalesStage" = "Total", "TotalARR" = "", "Probability" = "", WeightedTotal = WeightedTotal)
-  
- # opportunities <- rbindlist(list(opportunities, Total), use.names=FALSE)
   
   opportunities <- opportunities %>% 
     arrange_(.dots="Probability")
   
-  # Create plot -------------------------------------------------------------
   
+  
+  # Create plot -------------------------------------------------------------
   
   
   output$salesforecast = DT::renderDataTable({
@@ -67,6 +63,21 @@ salesforecast <- function(input, output, session) {
   output$txtout <- renderText({
     paste("Weighted [> 75%] Forecast:" , WeightedTotal, "EURO", sep = " ")
   })
+  
+  output$salesfunnel <- renderPlotly({
+    
+  fig <- plot_ly(
+    type = "funnelarea",
+    text = c("Pipeline", "Upside", "Most Likely", "Commit", "Order Received", "Closed Won"),
+    values = opportunities$"TotalARR",
+    title = list(position = "top center", size=5, text = "Sum of ARR (EUR)"),
+    marker = list(colors = c("deepskyblue", "lightsalmon", "tan", "lightgreen", "silver", "floralwhite")),
+    showlegend = TRUE
+    )
+  
+  fig
+  }
+  )
   
   
 }
