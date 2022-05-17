@@ -130,9 +130,9 @@ clustering_server <- function(input, output, session) {
     
     cluster_results$kmeans <- sapply(1:10, calc_kmeans)
     
+
     # calculate silhouette score for 1 to 10 clusters
     calc_ss <- function(x) {
-      #browser()
       ss <- cluster::silhouette(cluster_results$kmeans[,x]$cluster, dist(cluster_results$df1[,11:12]))
       return(mean(ss[, 3]))
     }
@@ -145,7 +145,7 @@ clustering_server <- function(input, output, session) {
     df_plot <- data.frame(n_cluster = 2:10,
                           avg_ss = avg_ss,
                           tot_wss = tot_wss)
-    
+
     output$elbow_method <- renderPlot({
       p_tot_wss <- ggplot(df_plot, aes(x=n_cluster, y=tot_wss, group=1)) +
         geom_line() +
