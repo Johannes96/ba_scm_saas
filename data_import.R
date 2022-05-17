@@ -77,11 +77,6 @@ data_clustering <- saas_data %>%
             ARR = sum(ARR)) %>%
   ungroup()
 
-# dataset for results of clustering
-clustering_results <- data_clustering
-
-# k-means data
-kmeans_results <- NULL
 
 
 
