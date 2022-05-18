@@ -31,6 +31,7 @@ clustering_UI <- function(id) {
                  ),
                tabPanel(
                  "Number of Clusters",
+                 br(),
                  fluidRow(
                    column(6,
                           
@@ -42,7 +43,33 @@ clustering_UI <- function(id) {
                    
                  )
                  ),
-               tabPanel("Interpretation", tableOutput("table"))
+               tabPanel(
+                 "Interpretation",
+                 br(),
+                 fluidRow(
+                   column(3,
+                          sliderInput(ns("sl_n_cluster"), 
+                                       label = "Number of clusters",
+                                       value = 3,
+                                       min = 2,
+                                       max = 10
+                                      ),
+                          selectInput(ns("sel_y"),
+                                      label = "y-axis",
+                                      choices = colnames(select_if(data_clustering, is.numeric))
+                                      ),
+                          selectInput(ns("sel_x"),
+                                      label = "x-axis",
+                                      choices = colnames(select_if(data_clustering, is.numeric)),
+                                      selected =  "PositionQuantity"
+                          )
+                   ),
+                   column(9,
+                          withSpinner(plotOutput(ns("scatter")))
+                   )
+                   
+                 )
+                 )
              )
         )
         
@@ -170,7 +197,27 @@ clustering_server <- function(input, output, session) {
     
   })
   
-  #TODO: implement interpretation (scatterplot, choose number of clusters, cond. boxplots/violinplots)
+  observeEvent(input$btn_interpret, {
+    
+    shinyjs::disable("btn_interpret")
+    showTab(session = session, inputId = "tabs", target = "Interpretation", select = TRUE)
+    
+    #sapply(13:22, function(x) {cluster_results$df1[,x] <- as.character(cluster_results$df1[,x])})
+    
+    output$scatter <- renderPlot({
+      n_cluster_col <- paste0("n_cluster_", input$sl_n_cluster)
+      
+      p_scatter <- ggplot(cluster_results$df1, aes_string(x = input$sel_x, y = input$sel_y, color = n_cluster_col)) +
+        geom_point()
+      
+      print(p_scatter)
+    })
+    
+    
+  })
+  
+  
+  #TODO: Change legend of scatter plot from continuous to categorical; add box plots with categorical variables + option to change to violin
   
   
 }
