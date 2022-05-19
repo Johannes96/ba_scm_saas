@@ -12,7 +12,7 @@ clustering_UI <- function(id) {
         h4(icon("arrow-down")),
         actionButton(ns("btn_n_cluster"), "Number of Clusters", width = '100%'),
         h4(icon("arrow-down")),
-        actionButton(ns("btn_interpret"), "Interpretation", width = '100%')
+        actionButton(ns("btn_scatter_plot"), "Scatter Plot", width = '100%')
       ),
       column(width = 9,
              tabsetPanel(id = ns("tabs"),
@@ -44,7 +44,7 @@ clustering_UI <- function(id) {
                  )
                  ),
                tabPanel(
-                 "Interpretation",
+                 "Scatter Plot",
                  br(),
                  fluidRow(
                    column(3,
@@ -65,11 +65,33 @@ clustering_UI <- function(id) {
                           )
                    ),
                    column(9,
-                          withSpinner(plotOutput(ns("scatter")))
+                          withSpinner(plotlyOutput(ns("scatter")))
                    )
                    
                  )
+                 ),
+               tabPanel(
+                 "Boxplot",
+                 br(),
+                 fluidRow(
+                   column(3,
+                          selectInput(ns("sel_y_box"),
+                                      label = "y-axis",
+                                      choices = colnames(select_if(data_clustering, is.numeric))
+                          ),
+                          selectInput(ns("sel_x_box"),
+                                      label = "x-axis",
+                                      choices = NULL,
+                                      selected =  "PositionQuantity"
+                          )
+                   ),
+                   column(9,
+                          withSpinner(plotlyOutput(ns("boxplot")))
+                   )
+                   
                  )
+               )
+               
              )
         )
         
@@ -83,9 +105,10 @@ clustering_server <- function(input, output, session) {
   # set initial state of tabs and buttons
   hideTab(session = session, inputId = "tabs", target = "PCA")
   hideTab(session = session, inputId = "tabs", target = "Number of Clusters")
-  hideTab(session = session, inputId = "tabs", target = "Interpretation")
+  hideTab(session = session, inputId = "tabs", target = "Scatter Plot")
+  hideTab(session = session, inputId = "tabs", target = "Boxplot")
   shinyjs::disable("btn_n_cluster")
-  shinyjs::disable("btn_interpret")
+  shinyjs::disable("btn_scatter_plot")
   
   cluster_results <- reactiveValues(df1 = 0, kmeans = 0)
   
@@ -193,31 +216,46 @@ clustering_server <- function(input, output, session) {
       
     })
     
-    shinyjs::enable("btn_interpret")
+    shinyjs::enable("btn_scatter_plot")
     
   })
   
-  observeEvent(input$btn_interpret, {
+  
+  observeEvent(input$btn_scatter_plot, {
     
-    shinyjs::disable("btn_interpret")
-    showTab(session = session, inputId = "tabs", target = "Interpretation", select = TRUE)
+    shinyjs::disable("btn_scatter_plot")
+    showTab(session = session, inputId = "tabs", target = "Scatter Plot", select = TRUE)
+    showTab(session = session, inputId = "tabs", target = "Boxplot", select = TRUE)
     
     #sapply(13:22, function(x) {cluster_results$df1[,x] <- as.character(cluster_results$df1[,x])})
     
-    output$scatter <- renderPlot({
+    output$scatter <- renderPlotly({
       n_cluster_col <- paste0("n_cluster_", input$sl_n_cluster)
       
-      p_scatter <- ggplot(cluster_results$df1, aes_string(x = input$sel_x, y = input$sel_y, color = n_cluster_col)) +
-        geom_point()
+      p_scatter <- ggplot(cluster_results$df1, aes_string(x = input$sel_x, y = input$sel_y)) +
+        geom_point(aes(color = .data[[n_cluster_col]]))
       
-      print(p_scatter)
+      ggplotly(p_scatter)
+    })
+    
+    output$boxplot <- renderPlotly({
+      df_temp <- cluster_results$df1 %>% dplyr::filter(ARR < 1000000 &
+                                                     PositionQuantity < 60000 &
+                                                     PositionSum < 200000) %>%
+                                         dplyr::mutate(across(13:22, as.character))
+      
+      updateSelectInput(session = session, "sel_x_box", choices = colnames(df_temp[, 13:22]))
+      
+      p_boxplot <- ggplot(df_temp, aes_string(x = input$sel_x_box, y = input$sel_y_box)) +
+        geom_boxplot()
+      
+      ggplotly(p_boxplot)
     })
     
     
   })
   
-  
-  #TODO: Change legend of scatter plot from continuous to categorical; add box plots with categorical variables + option to change to violin
-  
+  #TODO: Change legend of scatter plot from continuous to categorical; add boxplots with categorical variables + option to change to violin
+  #TODO: solve error for boxplot x-axis selector
   
 }
