@@ -43,7 +43,7 @@ clustering_UI <- function(id) {
                  )
                  ),
                tabPanel(
-                 "Scatter Plot",
+                 "Interpretation",
                  br(),
                  fluidRow(
                    column(3,
@@ -104,7 +104,7 @@ clustering_server <- function(input, output, session) {
   # set initial state of tabs and buttons
   hideTab(session = session, inputId = "tabs", target = "PCA")
   hideTab(session = session, inputId = "tabs", target = "Number of Clusters")
-  hideTab(session = session, inputId = "tabs", target = "Scatter Plot")
+  hideTab(session = session, inputId = "tabs", target = "Interpretation")
   hideTab(session = session, inputId = "tabs", target = "Boxplot")
   shinyjs::disable("btn_n_cluster")
   shinyjs::disable("btn_scatter_plot")
