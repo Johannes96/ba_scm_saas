@@ -35,7 +35,7 @@ ui <- fluidPage(theme = shinytheme("cosmo"),
     
     navbarMenu("More", icon = icon("cogs"),
                tabPanel("About", about_UI("about"), icon = icon("info")),
-               tabPanel("panel 4b", "four-b"),
+               tabPanel("Gossar", glossar_UI("glossar")),
                tabPanel("panel 4c", "four-c"))
   )
 )
@@ -54,6 +54,7 @@ server <- function(input, output) {
     callModule(metrics, "metrics")
     callModule(about, "about")
     callModule(clustering_server, "clustering")
+    callModule(glossar_server, "glossar")
 }
 
 shinyApp(ui = ui, server = server)
