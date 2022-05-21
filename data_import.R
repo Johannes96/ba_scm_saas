@@ -2,6 +2,7 @@
 # Establish connection with SQL-Database
 con_saas <- dbConnect(RSQLite::SQLite(), paste0(getwd(), "/data/saas_database.db"))
 
+
 # Define SELECT statements
 str_SQL_Adr <- "SELECT * FROM Adresses"
 str_SQL_Saas <- "SELECT * FROM SaaSData"
@@ -41,11 +42,6 @@ saas_opp <- dbGetQuery(con_saas, str_SQL_Opp) %>%
   mutate(Value = as.numeric(gsub(pattern = ",", replacement = ".", Value)))
 
 
-#Disconnet DB
-
-dbDisconnect(con_saas)
-
-
 # Data for map ------------------------------------------------------------
 
 #Read shape file with the rgdal library.
@@ -62,7 +58,7 @@ world_spdf@data$POP2005 <- as.numeric(as.character(world_spdf@data$POP2005)) / 1
 # Check if all countries in saas_data exist in world_spdf
 lapply(unique(saas_data$Country), function(country) paste(country, country %in% world_spdf@data$NAME))
 
-# Replace wrongly named countries
+# unify naming of countries
 world_spdf@data <- world_spdf@data %>%
   mutate(NAME = case_when(NAME == "Czech Republic" ~ "Czechia",
                             NAME == "United States" ~ "USA",
@@ -78,7 +74,8 @@ data_clustering <- saas_data %>%
   ungroup()
 
 
+#Disconnet DB when closing the shiny app
 
-
-
-  
+onStop(function () {
+  dbDisconnect(con_saas)
+  })

@@ -1,40 +1,40 @@
 glossar_UI <- function(id) {
+  ns <- NS(id)
   
   tabPanel(title = "Terminology",
            icon = shiny::icon(name = "book-reader"),
-           wellPanel(id = "panel_2",
+           wellPanel(id = ns("panel_2"),
                      style = "background: white",
                      navlistPanel(
-                       id = "insert",
+                       id = ns("insert"),
                        well = FALSE,
                        widths = c(2, 10),
                        
                        tabPanel(
                          title = "Data",
                          icon = shiny::icon(name = "database"),
-                         uiOutput("term_boxes_data")
+                         uiOutput(ns("term_boxes_data"))
                        ),
                        tabPanel(
                          title = "Statistics",
                          icon = shiny::icon(name = "chart-area"),
-                         uiOutput("term_boxes_statistics")
+                         uiOutput(ns("term_boxes_statistics"))
                        ),
                        tabPanel(
                          title = "Infrastructure",
                          icon = shiny::icon(name = "server"),
-                         uiOutput("term_boxes_infrastructure")
+                         uiOutput(ns("term_boxes_infrastructure"))
                        ),
                        tabPanel(
                          title = "Other",
                          icon = shiny::icon(name = "book-reader"),
-                         uiOutput("term_boxes_other")
+                         uiOutput(ns("term_boxes_other"))
                        )
                        
                      ),
                      br(),
-                     actionButton("btn_term_insert", "Add", icon = icon("plus-circle")),
-                     actionButton("btn_term_delete", "Delete", icon = icon("times-circle"))
-                     #actionButton("btn_debug", "", icon = icon("bug"))
+                     actionButton(ns("btn_term_insert"), "Add", icon = icon("plus-circle")),
+                     actionButton(ns("btn_term_delete"), "Delete", icon = icon("times-circle"))
            )
   )
    
@@ -42,19 +42,16 @@ glossar_UI <- function(id) {
 }
 
 glossar_server <- function(input, output, session) {
-  
+  ns2 <- NS("glossar")
   create_boxes <- function(category) {
     
     sqlString <- paste0("SELECT * FROM terms_data WHERE category == '", category, "';")
-    df_terms_temp <- dbGetQuery(con2, sqlString)
+    df_terms_temp <- dbGetQuery(con_saas, sqlString)
     
     v <- list()
     
     for (i in 1:nrow(df_terms_temp)){
-      v[[i]] <- box(status = "primary", collapsible = TRUE, collapsed = TRUE,
-                    title = h4(df_terms_temp$term[i], style = "display:inline"),
-                    df_terms_temp$explanation[i]
-      )
+      v[[i]] <- bs_panel(bg_color = "primary", panel_title = df_terms_temp$term[i], panel_text = df_terms_temp$explanation[i])
     }
     
     return(v)
@@ -66,14 +63,14 @@ glossar_server <- function(input, output, session) {
   output$term_boxes_infrastructure <- renderUI(create_boxes("infrastructure"))
   output$term_boxes_other <- renderUI(create_boxes("other"))
   
-  
+  #browser()
   # insert button
   observeEvent(input$btn_term_insert, {
     showModal(modalDialog(
-      textInput("term_question", "Question"),
-      textAreaInput("term_answer", "Answer", rows = 5),
-      selectizeInput("term_category", "Category", choices = c("data", "infrastructure", "statistics", "other")),
-      size = "l",   easyClose = T,   footer = tagList(actionButton("btn_term_insert_final","Add", icon = icon("plus-circle")),
+      textInput(ns2("term_question"), "Question"),
+      textAreaInput(ns2("term_answer"), "Answer", rows = 5),
+      selectizeInput(ns2("term_category"), "Category", choices = c("data", "infrastructure", "statistics", "other")),
+      size = "l",   easyClose = T,   footer = tagList(actionButton(ns2("btn_term_insert_final"),"Add", icon = icon("plus-circle")),
                                                       modalButton("Close", icon = icon("times-circle")))
     ))
   })
@@ -82,7 +79,7 @@ glossar_server <- function(input, output, session) {
   observeEvent(input$btn_term_insert_final, {
     
     sqlString <- paste0("INSERT INTO terms_data (term, explanation, category) VALUES ('",input$term_question,"', '", input$term_answer,"', '", input$term_category, "');")
-    dbSendQuery(con2, sqlString)
+    dbSendQuery(con_saas, sqlString)
     
     tab_name_temp <- paste0("term_boxes_", input$term_category)
     
@@ -97,11 +94,11 @@ glossar_server <- function(input, output, session) {
   # delete button
   observeEvent(input$btn_term_delete, {
     sqlString <- paste0("SELECT * FROM terms_data")
-    df_terms_temp <- dbGetQuery(con2, sqlString)
+    df_terms_temp <- dbGetQuery(con_saas, sqlString)
     
     showModal(modalDialog(
-      selectizeInput("term_question_del", "Which question do you want to delete?", choices = df_terms_temp$term),
-      size = "l",   easyClose = T,   footer = tagList(actionButton("btn_term_delete_final","Delete"),
+      selectizeInput(ns2("term_question_del"), "Which question do you want to delete?", choices = df_terms_temp$term),
+      size = "l",   easyClose = T,   footer = tagList(actionButton(ns2("btn_term_delete_final"),"Delete"),
                                                       modalButton("Close", icon = icon("times-circle")))
     ))
   })
@@ -121,8 +118,8 @@ glossar_server <- function(input, output, session) {
       sqlString <- paste0("DELETE FROM terms_data WHERE term = '", input$term_question_del, "';")
       sqlString_category <- paste0("SELECT category FROM terms_data WHERE term = '", input$term_question_del, "';")
       
-      term_category_temp <- dbGetQuery(con2, sqlString_category)
-      dbSendQuery(con2, sqlString)
+      term_category_temp <- dbGetQuery(con_saas, sqlString_category)
+      dbSendQuery(con_saas, sqlString)
       
       tab_name_temp <- paste0("term_boxes_", term_category_temp)
       
@@ -134,3 +131,4 @@ glossar_server <- function(input, output, session) {
   
 
 }
+

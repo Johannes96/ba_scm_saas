@@ -45,3 +45,4 @@ library(gt)
 library(shinyBS) # adds tooltips and popovers
 library(shinyjs)
 library(shinycssloaders)
+library(glue)

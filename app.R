@@ -35,7 +35,7 @@ ui <- fluidPage(theme = shinytheme("cosmo"),
     
     navbarMenu("More", icon = icon("cogs"),
                tabPanel("About", about_UI("about"), icon = icon("info")),
-               tabPanel("Gossar", glossar_UI("glossar")),
+               tabPanel("Glossar", glossar_UI("glossar")),
                tabPanel("panel 4c", "four-c"))
   )
 )
