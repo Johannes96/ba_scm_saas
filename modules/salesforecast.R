@@ -52,7 +52,7 @@ salesforecast <- function(input, output, session) {
   })
   
   output$txtout <- renderText({
-    paste("Weighted [> 75%] Forecast:" , WeightedTotal, "EURO", sep = " "), align = 'right'
+    paste("Weighted [> 75%] Forecast:" , WeightedTotal, "EURO", sep = " ")
   })
   
   output$salesfunnel <- renderPlotly({
