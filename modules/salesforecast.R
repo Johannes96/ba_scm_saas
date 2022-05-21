@@ -3,20 +3,11 @@
 salesforecast_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    sidebarLayout(
-      sidebarPanel(
-        fluidRow(column(12,
-                        verbatimTextOutput(ns("txtout"))                
-        ) 
-        )),
-      mainPanel(
         titlePanel("Quarterly Sales Forecast"),
         DT::dataTableOutput(ns("salesforecast")),
+        verbatimTextOutput(ns("txtout")),
         plotlyOutput(ns("salesfunnel"))
-        
-      )
     )
-  )
 }
 
 ## Server ------------------------------------------------------------------
@@ -61,7 +52,7 @@ salesforecast <- function(input, output, session) {
   })
   
   output$txtout <- renderText({
-    paste("Weighted [> 75%] Forecast:" , WeightedTotal, "EURO", sep = " ")
+    paste("Weighted [> 75%] Forecast:" , WeightedTotal, "EURO", sep = " "), align = 'right'
   })
   
   output$salesfunnel <- renderPlotly({
