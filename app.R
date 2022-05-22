@@ -29,14 +29,12 @@ ui <- fluidPage(theme = shinytheme("cosmo"),
               tabPanel("Other")),
     
     navbarMenu("Machine Learning", icon = icon("robot"),
-               tabPanel("Clustering", icon = icon("hubspot"), clustering_UI("clustering")),
-               tabPanel("Classification", icon = icon("sitemap"))
+               tabPanel("Clustering", icon = icon("hubspot"), clustering_UI("clustering"))
                ),
     
     navbarMenu("More", icon = icon("cogs"),
                tabPanel("About", about_UI("about"), icon = icon("info")),
-               tabPanel("Glossar", glossar_UI("glossar")),
-               tabPanel("panel 4c", "four-c"))
+               tabPanel("Glossar", glossar_UI("glossar")))
   )
 )
 
