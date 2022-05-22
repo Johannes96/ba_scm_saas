@@ -1,5 +1,6 @@
+
 bs_card <- function(font_color, bg_color, header_text, title_text, body_text) {
-  
+  # uses bootstrap 5
   shiny::div(
     class=glue::glue("card text-{font_color} bg-{bg_color} mb-3"), 
     style="max-width: 18rem;", 
@@ -29,7 +30,7 @@ bs_card <- function(font_color, bg_color, header_text, title_text, body_text) {
 }
 
 bs_panel <- function(bg_color, panel_title, panel_text) {
-  
+  # uses bootstrap 3
   shiny::div(
     class=glue("panel panel-{bg_color}"),
     

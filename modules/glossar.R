@@ -63,7 +63,6 @@ glossar_server <- function(input, output, session) {
   output$term_boxes_infrastructure <- renderUI(create_boxes("infrastructure"))
   output$term_boxes_other <- renderUI(create_boxes("other"))
   
-  #browser()
   # insert button
   observeEvent(input$btn_term_insert, {
     showModal(modalDialog(
