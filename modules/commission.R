@@ -7,7 +7,6 @@ commission_UI <- function(id) {
     sidebarLayout(
       sidebarPanel(
         titlePanel("Filter"),
-        downloadButton(ns('downloadData'),"Download Table"),
         fluidRow(column(12,
                         # Select Month
                         selectInput(inputId = ns("Month"),
@@ -191,14 +190,7 @@ commission <- function(input, output, session) {
     
   })
 
-  output$downloadData <- downloadHandler(
-    filename = function() {
-      paste(input$Month, "_commission_calculation.csv", sep = "")
-    },
-    content = function(file) {
-      write.table(dat(), row.names = FALSE, dec = ",", sep = ";",  quote = FALSE, file)
-    }
-  )
+
 
 }
 
