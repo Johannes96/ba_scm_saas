@@ -40,11 +40,9 @@ descriptive_analytics_UI <- function(id) {
         , width=3),
       
       mainPanel(
-        tabsetPanel(
-          tabPanel(title = "Choropleth", icon = icon("globe-europe"), leafletOutput(ns("map"), height = "600")),
-          tabPanel(title = "Map Timo", icon = icon("map-marked"))
+          tabPanel(title = "Choropleth", icon = icon("globe-europe"), leafletOutput(ns("map"), height = "600"))
         )
-        )
+        
       )
     )
 
