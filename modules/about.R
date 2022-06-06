@@ -14,7 +14,7 @@ about_UI <- function(id) {
               p(strong("ARR-Bridge"), "illustrates the new, expanded, contracted and churned customers measured in ARR."),
               p(strong("Commission calculation"), "displays two tables in two tabs, one for controlling and one for accounting. In both tables the commission amount that the employees earned is calculated, based on the new and expanded business for a month. Controlling employees can see more details for the calculation so they can check if everything is correct, and for the accounting employees the tables shows the amounts grouped by sales representatives which they can include in the payroll."),
               p(strong("Metrics"), "contains further metrics, like Combined Customer Acquisition Ratio or Avarage ARR per Customer."),
-              p("With the help of", strong("Forecast"), "you are able to predict your expected future ARR and react prior if need be."),
+              p("With the help of two different types of", strong("Forecasts"), "you are able to predict your expected future ARR and react prior if need be."),
               ),
            br()),
     column(6,
@@ -33,8 +33,8 @@ about_UI <- function(id) {
           withMathJax(),
           p('$$ARR = (Total ~contract ~value / ~billing ~intervall) * 12$$',style="color:black;border:1px solid black;background-color:white"),
           br(),
-          p("Non-recurring revenues, meaning one-time purchases of services/support, are excluded from ARR calculation.")
-           )
+          h5(p("Non-recurring revenues, meaning one-time purchases of services/support, are excluded from ARR calculation.")
+           ))
            
            
       
