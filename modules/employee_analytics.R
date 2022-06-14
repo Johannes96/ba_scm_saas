@@ -1,4 +1,4 @@
-customer_analytics_UI <- function(id) {
+employee_analytics_UI <- function(id) {
   ns <- NS(id)
   
   tagList(
@@ -10,7 +10,7 @@ customer_analytics_UI <- function(id) {
   
 }
 
-customer_analytics_server <- function(input, output, session) {
+employee_analytics_server <- function(input, output, session) {
   
   
   output$pivot_saas <-renderRpivotTable({
