@@ -1,5 +1,5 @@
 
-descriptive_analytics_UI <- function(id) {
+geographical_analytics_UI <- function(id) {
   ns <- NS(id)
   
   tagList(
@@ -48,7 +48,7 @@ descriptive_analytics_UI <- function(id) {
 
 }
 
-descriptive_analytics <- function(input, output, session) {
+geographical_analytics <- function(input, output, session) {
 
 # map ---------------------------------------------------------------------
 

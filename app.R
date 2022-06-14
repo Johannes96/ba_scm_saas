@@ -12,7 +12,7 @@ ui <- fluidPage(theme = shinytheme("cosmo"),
     tabPanel("Welcome", welcome_UI("welcome"), icon = icon("font-awesome")),
     
     navbarMenu("Descriptive analytics", icon = icon("deezer"),
-                tabPanel("Geographical analysis", descriptive_analytics_UI("descriptive_analytics"), icon = icon("globe")),
+                tabPanel("Geographical analysis", geographical_analytics_UI("geographical_analytics"), icon = icon("globe")),
                 tabPanel("All time analysis", alltime_UI("alltime"), icon = icon("chart-bar")),
                 tabPanel("Employee performance", customer_analytics_UI("customer_analytics"), icon = icon("users")),
                 tabPanel("ARR-Bridge", bridge_UI("bridge"), icon = icon("bold")),
@@ -40,7 +40,7 @@ ui <- fluidPage(theme = shinytheme("cosmo"),
 server <- function(input, output) {
 
     callModule(welcome, "welcome")
-    callModule(descriptive_analytics, "descriptive_analytics")
+    callModule(geographical_analytics, "geographical_analytics")
     callModule(alltime_server, "alltime")
     callModule(predictive_analytics, "predictive_analytics")
     callModule(salesforecast, "salesforecast")
