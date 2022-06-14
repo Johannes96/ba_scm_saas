@@ -1,8 +1,7 @@
-alltime_UI <- function(id) {
+industry_analytics_UI <- function(id) {
   ns <- NS(id)
   
   tagList(
-    
     fluidRow(
       rpivotTableOutput(ns("pivot_saas"))   
     )
@@ -10,7 +9,7 @@ alltime_UI <- function(id) {
   
 }
 
-alltime_server <- function(input, output, session) {
+industry_analytics_server <- function(input, output, session) {
   
   
   output$pivot_saas <-renderRpivotTable({
