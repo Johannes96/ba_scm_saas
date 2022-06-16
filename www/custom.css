@@ -1,5 +1,18 @@
-# red background color for all buttons with id ending in btn_debug
+
 .btn[id$='btn_debug'] {
   background-color: #990000;
   
+}
+
+
+.modal-body{ 
+  height: 250px
+  
+}
+
+h3 {color:red;}
+
+body {
+  background-color: black;
+  color: white; /* text color */
 }

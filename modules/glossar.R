@@ -95,7 +95,7 @@ glossar_server <- function(input, output, session) {
     sqlString <- paste0("SELECT * FROM terms_data")
     df_terms_temp <- dbGetQuery(con_saas, sqlString)
     
-    showModal(modalDialog(
+    showModal(modalDialog(id = "del_modalDialog",
       selectizeInput(ns2("term_question_del"), "Which question do you want to delete?", choices = df_terms_temp$term),
       size = "l",   easyClose = T,   footer = tagList(actionButton(ns2("btn_term_delete_final"),"Delete"),
                                                       modalButton("Close", icon = icon("times-circle")))

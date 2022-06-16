@@ -36,8 +36,8 @@ geographical_analytics_UI <- function(id) {
                                     max = max(saas_data$BillingInterval),
                                     value = c(min(saas_data$BillingInterval), max(saas_data$BillingInterval))),
         
-                        actionButton(ns("btn_debug"), "debug", icon = icon("bug"))
-        , width=3),
+                        #actionButton(ns("btn_debug"), "debug", icon = icon("bug")),
+        width=3),
       
       mainPanel(
           tabPanel(title = "Choropleth", icon = icon("globe-europe"), leafletOutput(ns("map"), height = "600"))

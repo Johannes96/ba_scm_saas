@@ -151,7 +151,6 @@ clustering_server <- function(input, output, session) {
              ylab = "Principal Component 2")
     })
     
-    #TODO: ggf. Tabelle einfügen
     shinyjs::enable("btn_n_cluster")
       
   })

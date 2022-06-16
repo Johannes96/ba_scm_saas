@@ -2,8 +2,13 @@ source('global.R')
 
 ui <- fluidPage(theme = shinytheme("cosmo"),
                 
-                # add css file to customize appearance
-                tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")),
+                # add cs to customize appearance
+                #tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")),
+                tags$head(
+                  tags$style(HTML("
+                  .modal-body[id='del_modalDialog']{min-height: 250px}
+                  "))
+                ),
            
     navbarPage(
     theme = "cosmo",
